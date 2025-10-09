@@ -1,7 +1,7 @@
-import { generateYAxis } from "@/app/lib/utils";
 import { CalendarIcon } from "@heroicons/react/24/outline";
+
+import { generateYAxis } from "@/app/lib/utils";
 import { lusitana } from "@/app/ui/fonts";
-import { Revenue } from "@/app/lib/definitions";
 import { fetchRevenue } from "@/app/lib/data";
 
 // This component is representational only.
@@ -46,7 +46,7 @@ export default async function RevenueChart() {
                 style={{
                   height: `${(chartHeight / topLabel) * month.revenue}px`,
                 }}
-              ></div>
+              />
               <p className="-rotate-90 text-sm text-gray-400 sm:rotate-0">
                 {month.month}
               </p>

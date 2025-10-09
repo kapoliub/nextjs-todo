@@ -3,8 +3,9 @@
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Link from "next/link";
-import { generatePagination } from "@/app/lib/utils";
 import { usePathname, useSearchParams } from "next/navigation";
+
+import { generatePagination } from "@/app/lib/utils";
 
 export default function Pagination({ totalPages }: { totalPages: number }) {
   const pathname = usePathname();
@@ -14,7 +15,9 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
 
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams);
+
     params.set("page", pageNumber.toString());
+
     return `${pathname}?${params.toString()}`;
   };
 
@@ -40,9 +43,9 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
               <PaginationNumber
                 key={`${page}-${index}`}
                 href={createPageURL(page)}
+                isActive={currentPage === page}
                 page={page}
                 position={position}
-                isActive={currentPage === page}
               />
             );
           })}
@@ -77,13 +80,13 @@ function PaginationNumber({
       "z-10 bg-blue-600 border-blue-600 text-white": isActive,
       "hover:bg-gray-100": !isActive && position !== "middle",
       "text-gray-300": position === "middle",
-    }
+    },
   );
 
   return isActive || position === "middle" ? (
     <div className={className}>{page}</div>
   ) : (
-    <Link href={href} className={className}>
+    <Link className={className} href={href}>
       {page}
     </Link>
   );
@@ -105,7 +108,7 @@ function PaginationArrow({
       "hover:bg-gray-100": !isDisabled,
       "mr-2 md:mr-4": direction === "left",
       "ml-2 md:ml-4": direction === "right",
-    }
+    },
   );
 
   const icon =

@@ -4,8 +4,9 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import postgres from "postgres";
 import { redirect } from "next/navigation";
-import { signIn } from "@/auth";
 import { AuthError } from "next-auth";
+
+import { signIn } from "@/auth";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
@@ -62,6 +63,7 @@ export async function createInvoice(prevState: State, formData: FormData) {
   } catch (error) {
     // We'll also log the error to the console for now
     console.error(error);
+
     return {
       message: "Database Error: Failed to Create Invoice.",
     };
@@ -74,7 +76,7 @@ export async function createInvoice(prevState: State, formData: FormData) {
 export async function updateInvoice(
   id: string,
   prevState: State,
-  formData: FormData
+  formData: FormData,
 ) {
   const validatedFields = UpdateInvoice.safeParse({
     customerId: formData.get("customerId"),
@@ -113,7 +115,7 @@ export async function deleteInvoice(id: string) {
 
 export async function authenticate(
   prevState: string | undefined,
-  formData: FormData
+  formData: FormData,
 ) {
   try {
     await signIn("credentials", formData);
@@ -132,7 +134,7 @@ export async function authenticate(
 
 export async function register(
   prevState: string | undefined,
-  formData: FormData
+  formData: FormData,
 ) {
   return "Registration is currently disabled.";
 }

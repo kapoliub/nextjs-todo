@@ -1,8 +1,8 @@
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Image from "next/image";
+
 import { lusitana } from "@/app/ui/fonts.ts";
-import { LatestInvoice } from "@/app/lib/definitions";
 import { fetchLatestInvoices } from "@/app/lib/data";
 
 export default async function LatestInvoices() {
@@ -24,16 +24,16 @@ export default async function LatestInvoices() {
                   "flex flex-row items-center justify-between py-4",
                   {
                     "border-t": i !== 0,
-                  }
+                  },
                 )}
               >
                 <div className="flex items-center">
                   <Image
-                    src={invoice.image_url}
                     alt={`${invoice.name}'s profile picture`}
                     className="mr-4 rounded-full"
-                    width={32}
                     height={32}
+                    src={invoice.image_url}
+                    width={32}
                   />
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold md:text-base">

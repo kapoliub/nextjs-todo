@@ -1,8 +1,9 @@
-import Image from 'next/image';
-import { UpdateInvoice, DeleteInvoice } from '@/app/ui/invoices/buttons';
-import InvoiceStatus from '@/app/ui/invoices/status';
-import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
-import { fetchFilteredInvoices } from '@/app/lib/data';
+import Image from "next/image";
+
+import { UpdateInvoice, DeleteInvoice } from "@/app/ui/invoices/buttons";
+import InvoiceStatus from "@/app/ui/invoices/status";
+import { formatDateToLocal, formatCurrency } from "@/app/lib/utils";
+import { fetchFilteredInvoices } from "@/app/lib/data";
 
 export default async function InvoicesTable({
   query,
@@ -27,11 +28,11 @@ export default async function InvoicesTable({
                   <div>
                     <div className="mb-2 flex items-center">
                       <Image
-                        src={invoice.image_url}
-                        className="mr-2 rounded-full"
-                        width={28}
-                        height={28}
                         alt={`${invoice.name}'s profile picture`}
+                        className="mr-2 rounded-full"
+                        height={28}
+                        src={invoice.image_url}
+                        width={28}
                       />
                       <p>{invoice.name}</p>
                     </div>
@@ -57,22 +58,22 @@ export default async function InvoicesTable({
           <table className="hidden min-w-full text-gray-900 md:table">
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
-                <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                <th className="px-4 py-5 font-medium sm:pl-6" scope="col">
                   Customer
                 </th>
-                <th scope="col" className="px-3 py-5 font-medium">
+                <th className="px-3 py-5 font-medium" scope="col">
                   Email
                 </th>
-                <th scope="col" className="px-3 py-5 font-medium">
+                <th className="px-3 py-5 font-medium" scope="col">
                   Amount
                 </th>
-                <th scope="col" className="px-3 py-5 font-medium">
+                <th className="px-3 py-5 font-medium" scope="col">
                   Date
                 </th>
-                <th scope="col" className="px-3 py-5 font-medium">
+                <th className="px-3 py-5 font-medium" scope="col">
                   Status
                 </th>
-                <th scope="col" className="relative py-3 pl-6 pr-3">
+                <th className="relative py-3 pl-6 pr-3" scope="col">
                   <span className="sr-only">Edit</span>
                 </th>
               </tr>
@@ -86,11 +87,11 @@ export default async function InvoicesTable({
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex items-center gap-3">
                       <Image
-                        src={invoice.image_url}
-                        className="rounded-full"
-                        width={28}
-                        height={28}
                         alt={`${invoice.name}'s profile picture`}
+                        className="rounded-full"
+                        height={28}
+                        src={invoice.image_url}
+                        width={28}
                       />
                       <p>{invoice.name}</p>
                     </div>

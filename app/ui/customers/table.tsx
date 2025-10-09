@@ -1,10 +1,8 @@
-import Image from 'next/image';
-import { lusitana } from '@/app/ui/fonts';
-import Search from '@/app/ui/search';
-import {
-  CustomersTableType,
-  FormattedCustomersTable,
-} from '@/app/lib/definitions';
+import Image from "next/image";
+
+import { lusitana } from "@/app/ui/fonts";
+import Search from "@/app/ui/search";
+import { FormattedCustomersTable } from "@/app/lib/definitions";
 
 export default async function CustomersTable({
   customers,
@@ -32,11 +30,11 @@ export default async function CustomersTable({
                         <div className="mb-2 flex items-center">
                           <div className="flex items-center gap-3">
                             <Image
-                              src={customer.image_url}
-                              className="rounded-full"
                               alt={`${customer.name}'s profile picture`}
-                              width={28}
+                              className="rounded-full"
                               height={28}
+                              src={customer.image_url}
+                              width={28}
                             />
                             <p>{customer.name}</p>
                           </div>
@@ -65,19 +63,19 @@ export default async function CustomersTable({
               <table className="hidden min-w-full rounded-md text-gray-900 md:table">
                 <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
                   <tr>
-                    <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                    <th className="px-4 py-5 font-medium sm:pl-6" scope="col">
                       Name
                     </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
+                    <th className="px-3 py-5 font-medium" scope="col">
                       Email
                     </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
+                    <th className="px-3 py-5 font-medium" scope="col">
                       Total Invoices
                     </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
+                    <th className="px-3 py-5 font-medium" scope="col">
                       Total Pending
                     </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
+                    <th className="px-4 py-5 font-medium" scope="col">
                       Total Paid
                     </th>
                   </tr>
@@ -89,11 +87,11 @@ export default async function CustomersTable({
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
                           <Image
-                            src={customer.image_url}
-                            className="rounded-full"
                             alt={`${customer.name}'s profile picture`}
-                            width={28}
+                            className="rounded-full"
                             height={28}
+                            src={customer.image_url}
+                            width={28}
                           />
                           <p>{customer.name}</p>
                         </div>

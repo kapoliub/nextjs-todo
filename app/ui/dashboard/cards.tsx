@@ -4,6 +4,7 @@ import {
   UserGroupIcon,
   InboxIcon,
 } from "@heroicons/react/24/outline";
+
 import { lusitana } from "@/app/ui/fonts";
 import { fetchCardData } from "@/app/lib/data";
 
@@ -21,17 +22,18 @@ export default async function CardWrapper() {
     totalPaidInvoices,
     totalPendingInvoices,
   } = await fetchCardData();
+
   return (
     <>
       {/* NOTE: Uncomment this code in Chapter 9 */}
 
-      <Card title="Collected" value={totalPaidInvoices} type="collected" />
-      <Card title="Pending" value={totalPendingInvoices} type="pending" />
-      <Card title="Total Invoices" value={numberOfInvoices} type="invoices" />
+      <Card title="Collected" type="collected" value={totalPaidInvoices} />
+      <Card title="Pending" type="pending" value={totalPendingInvoices} />
+      <Card title="Total Invoices" type="invoices" value={numberOfInvoices} />
       <Card
         title="Total Customers"
-        value={numberOfCustomers}
         type="customers"
+        value={numberOfCustomers}
       />
     </>
   );
