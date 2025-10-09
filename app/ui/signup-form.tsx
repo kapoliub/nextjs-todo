@@ -1,11 +1,5 @@
 "use client";
 
-import {
-  AtSymbolIcon,
-  KeyIcon,
-  ExclamationCircleIcon,
-} from "@heroicons/react/24/outline";
-import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { useActionState } from "react";
 import { useSearchParams } from "next/navigation";
 
@@ -18,7 +12,7 @@ export default function SignupForm() {
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
   const [errorMessage, formAction, isPending] = useActionState(
     register,
-    undefined,
+    undefined
   );
 
   return (
@@ -44,7 +38,7 @@ export default function SignupForm() {
                 placeholder="Enter your email address"
                 type="email"
               />
-              <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+              {/* <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" /> */}
             </div>
           </div>
           <div className="mt-4">
@@ -64,14 +58,14 @@ export default function SignupForm() {
                 placeholder="Enter password"
                 type="password"
               />
-              <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+              {/* <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" /> */}
             </div>
           </div>
         </div>
         <input name="redirectTo" type="hidden" value={callbackUrl} />
-        <Button aria-disabled={isPending} className="mt-4 w-full">
+        {/* <Button aria-disabled={isPending} className="mt-4 w-full">
           Log in <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
-        </Button>
+        </Button> */}
         <div
           aria-atomic="true"
           aria-live="polite"
@@ -79,7 +73,7 @@ export default function SignupForm() {
         >
           {errorMessage && (
             <>
-              <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
+              {/* <ExclamationCircleIcon className="h-5 w-5 text-red-500" /> */}
               <p className="text-sm text-red-500">{errorMessage}</p>
             </>
           )}
