@@ -21,7 +21,7 @@ export default function Welcome() {
     setIsHashValid(allPresent);
   }, []);
 
-  if (window && !isHashValid) {
+  if (typeof window !== "undefined" && !isHashValid) {
     notFound();
   }
 
