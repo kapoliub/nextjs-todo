@@ -11,12 +11,12 @@ export interface AuthState {
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 export async function registerUser({ email, password }: AuthState) {
@@ -96,6 +96,7 @@ export async function signOut() {
   // 2. Call Supabase to revoke tokens
   const { error } = await supabase.auth.signOut();
 
+  // eslint-disable-next-line no-console
   if (error) console.error("Sign-out error:", error);
 
   // 3. Clear cookies
@@ -108,14 +109,16 @@ export async function signOut() {
 
 export async function deleteUser() {
   const { data, error } = await supabaseAdmin.auth.admin.deleteUser(
-    "5d41dd01-9391-4745-8add-db53501e3ab2"
+    "5d41dd01-9391-4745-8add-db53501e3ab2",
   );
 
   await signOut();
 
   if (error) {
+    // eslint-disable-next-line no-console
     console.error("Failed to delete user:", error);
   } else {
+    // eslint-disable-next-line no-console
     console.log("Deleted user:", data);
   }
 }

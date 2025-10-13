@@ -1,5 +1,6 @@
-import { deleteUser } from "@/auth";
 import { Button } from "@heroui/button";
+
+import { deleteUser } from "@/auth";
 
 export default function Home() {
   return (

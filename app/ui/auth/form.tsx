@@ -40,7 +40,7 @@ const passwordSchema = z
   .regex(/[0-9]/, "Password must contain at least one number")
   .regex(
     /[^A-Za-z0-9]/,
-    "Password must contain at least one special character"
+    "Password must contain at least one special character",
   );
 
 const inputs: InputsList = [
@@ -78,7 +78,7 @@ export default function AuthForm({ type, onSubmit }: AuthFormProps) {
       {
         message: "Passwords do not match",
         path: ["confirmPassword"], // highlights which field has the error
-      }
+      },
     );
 
   const handleSubmit = async (e: FormEvent) => {
