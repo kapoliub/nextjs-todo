@@ -1,10 +1,10 @@
 import "@/styles/globals.css";
-import { Metadata, Viewport } from "next";
-import { Link } from "@heroui/link";
+import { Viewport } from "next";
 import clsx from "clsx";
 
 import { Providers } from "./providers";
 
+import Navbar from "@/app/ui/navbar";
 import { fontSans } from "@/config/fonts";
 
 // export const metadata: Metadata = {
@@ -35,12 +35,15 @@ export default function RootLayout({
       <head />
       <body
         className={clsx(
-          "min-h-screen text-foreground bg-background font-sans antialiased",
+          "h-screen text-foreground bg-background font-sans antialiased",
           fontSans.variable
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          <div className="relative flex flex-col h-screen"></div>
+          <Navbar />
+          <div className="w-full h-max flex items-center justify-center p-4">
+            {children}
+          </div>
         </Providers>
       </body>
     </html>
