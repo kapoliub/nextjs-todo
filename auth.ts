@@ -4,7 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
-interface SignUpState {
+export interface AuthState {
   email: string;
   password: string;
 }
@@ -19,13 +19,13 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-export async function registerUser({ email, password }: SignUpState) {
+export async function registerUser({ email, password }: AuthState) {
   const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       // TODO: handle diff envs
-      emailRedirectTo: process.env.NEXT_PUBLIC_VERCEL_URL,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_VERCEL_URL}/welcome`,
     },
   });
 
@@ -33,10 +33,10 @@ export async function registerUser({ email, password }: SignUpState) {
     return error;
   }
 
-  redirect("/check-your-email");
+  redirect(`/check-your-email?email=${email}`);
 }
 
-export async function loginUser({ email, password }: SignUpState) {
+export async function loginUser({ email, password }: AuthState) {
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -107,11 +107,11 @@ export async function signOut() {
 }
 
 export async function deleteUser() {
-  await signOut();
-
   const { data, error } = await supabaseAdmin.auth.admin.deleteUser(
-    "a3cdc091-350f-4070-a025-e2674ceeefe3"
+    "5d41dd01-9391-4745-8add-db53501e3ab2"
   );
+
+  await signOut();
 
   if (error) {
     console.error("Failed to delete user:", error);
