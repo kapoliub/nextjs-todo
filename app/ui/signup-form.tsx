@@ -3,7 +3,6 @@
 import { useActionState } from "react";
 import { useSearchParams } from "next/navigation";
 
-import { Button } from "@/app/ui/button";
 import { register } from "@/app/lib/actions";
 import { lusitana } from "@/app/ui/fonts";
 
@@ -12,7 +11,7 @@ export default function SignupForm() {
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
   const [errorMessage, formAction, isPending] = useActionState(
     register,
-    undefined
+    undefined,
   );
 
   return (

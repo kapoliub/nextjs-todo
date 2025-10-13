@@ -7,7 +7,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@heroui/dropdown";
-import ThemeSwitcher from "@/app/ui/theme-switcher";
+
 import { signOut } from "@/auth";
 
 interface User {
