@@ -1,12 +1,15 @@
 import { Button } from "@heroui/button";
 
-import { deleteUser } from "@/auth";
+import { deleteUser, getUser } from "@/auth";
+import Link from "next/link";
 
-export default function Home() {
+export default async function Home() {
   return (
-    <section className="">
-      Welcome to Todo list app
-      <Button onPress={deleteUser}>deleteUser</Button>
+    <section>
+      {/* <Button onPress={deleteUser}>deleteUser</Button> */}
+      <Button as={Link} href="/dashboard">
+        Go to dashboard
+      </Button>
     </section>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { PATHS } from "@/lib/paths";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -34,7 +35,7 @@ export default function Welcome() {
         Now you can{" "}
         <Link
           className="text-blue-600 dark:text-sky-400 hover:underline"
-          href={"/login"}
+          href={PATHS.login}
         >
           login
         </Link>

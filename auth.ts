@@ -4,6 +4,8 @@ import { createClient } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
+import { PATHS } from "@/lib/paths";
+
 export interface AuthState {
   email: string;
   password: string;
@@ -11,12 +13,12 @@ export interface AuthState {
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 export async function registerUser({ email, password }: AuthState) {
@@ -25,7 +27,7 @@ export async function registerUser({ email, password }: AuthState) {
     password,
     options: {
       // TODO: handle diff envs
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_VERCEL_URL}/welcome`,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_VERCEL_URL}${PATHS.welcome}`,
     },
   });
 
@@ -33,7 +35,7 @@ export async function registerUser({ email, password }: AuthState) {
     return error;
   }
 
-  redirect(`/check-your-email?email=${email}`);
+  redirect(`/${PATHS.checkYourEmail}?email=${email}`);
 }
 
 export async function loginUser({ email, password }: AuthState) {
@@ -104,12 +106,12 @@ export async function signOut() {
   cookieStore.delete("sb-refresh-token");
 
   // 4. Redirect to login page
-  redirect("/login");
+  redirect(PATHS.login);
 }
 
 export async function deleteUser() {
   const { data, error } = await supabaseAdmin.auth.admin.deleteUser(
-    "5d41dd01-9391-4745-8add-db53501e3ab2",
+    "19b5b67a-977a-414b-a5e9-1bf5d5953592"
   );
 
   await signOut();

@@ -1,21 +1,23 @@
 "use client";
 
+import { PATHS } from "@/lib/paths";
 import { Button } from "@heroui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export default function AuthButton() {
   const pathname = usePathname();
-  const isSignupPage = pathname === "/signup";
+  const isSignupPage = pathname === PATHS.signup;
+  const isWelcomePage = pathname === PATHS.welcome;
 
   return (
     <Button
       as={Link}
       color="primary"
-      href={isSignupPage ? "/login" : "/signup"}
+      href={isSignupPage || isWelcomePage ? PATHS.login : PATHS.signup}
       variant="flat"
     >
-      {isSignupPage ? "Login" : "Sign Up"}
+      {isSignupPage || isWelcomePage ? "Login" : "Sign Up"}
     </Button>
   );
 }
