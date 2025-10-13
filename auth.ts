@@ -11,12 +11,12 @@ interface SignUpState {
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 export async function registerUser({ email, password }: SignUpState) {
@@ -110,7 +110,7 @@ export async function deleteUser() {
   await signOut();
 
   const { data, error } = await supabaseAdmin.auth.admin.deleteUser(
-    "a3cdc091-350f-4070-a025-e2674ceeefe3",
+    "a3cdc091-350f-4070-a025-e2674ceeefe3"
   );
 
   if (error) {
