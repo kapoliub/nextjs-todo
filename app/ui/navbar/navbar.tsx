@@ -4,11 +4,11 @@ import {
   NavbarItem,
 } from "@heroui/navbar";
 
-import AuthButton from "./navbar/auth-button";
-import AvatarDropdown from "./navbar/avatar-dropdown";
+import AuthButton from "./auth-button";
+import AvatarDropdown from "./avatar-dropdown";
 
 import ThemeSwitcher from "@/app/ui/theme-switcher";
-import { getUser } from "@/auth";
+import { getUser } from "@/lib/actions/auth";
 
 export default async function Navbar() {
   const user = await getUser();

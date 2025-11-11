@@ -4,7 +4,7 @@ import clsx from "clsx";
 
 import { Providers } from "./providers";
 
-import Navbar from "@/app/ui/navbar";
+import Navbar from "@/app/ui/navbar/navbar";
 import { fontSans } from "@/config/fonts";
 
 // export const metadata: Metadata = {
@@ -36,12 +36,12 @@ export default function RootLayout({
       <body
         className={clsx(
           "h-screen text-foreground bg-background font-sans antialiased",
-          fontSans.variable,
+          fontSans.variable
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
           <Navbar />
-          <div className="w-full h-max flex items-center justify-center p-4">
+          <div className="w-full h-max h-full flex items-center justify-center p-4">
             {children}
           </div>
         </Providers>

@@ -35,7 +35,7 @@ export async function registerUser({ email, password }: AuthState) {
     return error;
   }
 
-  redirect(`/${PATHS.checkYourEmail}?email=${email}`);
+  redirect(`${PATHS.checkYourEmail}?email=${email}`);
 }
 
 export async function loginUser({ email, password }: AuthState) {
@@ -62,7 +62,7 @@ export async function loginUser({ email, password }: AuthState) {
     sameSite: "lax",
   });
 
-  redirect("/");
+  redirect(PATHS.todos);
 }
 
 export async function getUser() {
@@ -79,7 +79,11 @@ export async function getUser() {
 
   const { data, error } = await supabase.auth.getUser();
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error(error);
+
+    return;
+  }
 
   return data.user;
 }

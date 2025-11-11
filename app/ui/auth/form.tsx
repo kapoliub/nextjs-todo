@@ -10,7 +10,7 @@ import { AuthError } from "@supabase/supabase-js";
 
 import PasswordInput from "./password-input";
 
-import { type AuthState } from "@/auth";
+import { type AuthState } from "@/lib/actions/auth";
 
 interface AuthFormErrors {
   email?: string[];
@@ -40,7 +40,7 @@ const passwordSchema = z
   .regex(/[0-9]/, "Password must contain at least one number")
   .regex(
     /[^A-Za-z0-9]/,
-    "Password must contain at least one special character",
+    "Password must contain at least one special character"
   );
 
 const inputs: InputsList = [
@@ -67,19 +67,19 @@ export default function AuthForm({ type, onSubmit }: AuthFormProps) {
 
   const isSignUpForm = type === "signup";
 
-  const signUpFormSchema = z
-    .object({
-      email: z.string().email("Invalid email address"),
-      password: passwordSchema,
-      confirmPassword: isSignUpForm ? z.string() : z.undefined(),
-    })
-    .refine(
-      (data) => (isSignUpForm ? data.password === data.confirmPassword : true),
-      {
-        message: "Passwords do not match",
-        path: ["confirmPassword"], // highlights which field has the error
-      },
-    );
+  const baseSignUpFormSchema = z.object({
+    email: z.string().email("Invalid email address"),
+    password: passwordSchema,
+    confirmPassword: isSignUpForm ? z.string() : z.undefined(),
+  });
+
+  const signUpFormSchema = baseSignUpFormSchema.refine(
+    (data) => (isSignUpForm ? data.password === data.confirmPassword : true),
+    {
+      message: "Passwords do not match",
+      path: ["confirmPassword"],
+    }
+  );
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -115,10 +115,19 @@ export default function AuthForm({ type, onSubmit }: AuthFormProps) {
   };
 
   const clearError = (e: ChangeEvent<HTMLInputElement>) => {
+    const { success, error } = baseSignUpFormSchema.shape[
+      e.target.name as keyof typeof baseSignUpFormSchema.shape
+    ].safeParse(e.target.value);
+
     setErrors((prev) => {
       const newErrors = { ...prev };
 
-      delete newErrors?.[e.target.name as keyof AuthFormErrors];
+      if (success) {
+        delete newErrors?.[e.target.name as keyof AuthFormErrors];
+      }
+
+      newErrors[e.target.name as keyof AuthFormErrors] =
+        error?.flatten().formErrors;
 
       return newErrors;
     });
@@ -148,7 +157,13 @@ export default function AuthForm({ type, onSubmit }: AuthFormProps) {
                 key={label}
                 required
                 disabled={isLoading}
-                errorMessage={errors?.[name]?.[0]}
+                errorMessage={() => (
+                  <ul>
+                    {errors?.[name]?.map((error) => (
+                      <li key={error}>{error}</li>
+                    ))}
+                  </ul>
+                )}
                 isInvalid={!!errors?.[name]?.[0]}
                 label={label}
                 labelPlacement="outside-top"

@@ -1,9 +1,10 @@
 "use client";
 
-import { PATHS } from "@/lib/paths";
 import { Button } from "@heroui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+import { PATHS } from "@/lib/paths";
 
 export default function AuthButton() {
   const pathname = usePathname();

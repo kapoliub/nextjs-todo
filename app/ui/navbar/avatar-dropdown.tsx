@@ -8,7 +8,7 @@ import {
   DropdownTrigger,
 } from "@heroui/dropdown";
 
-import { signOut } from "@/auth";
+import { signOut } from "@/lib/actions/auth";
 
 interface User {
   email: string;

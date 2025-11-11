@@ -1,15 +1,22 @@
-import NextAuth from "next-auth";
+import { NextResponse, type NextRequest } from "next/server";
 
-import { authConfig } from "./auth.config";
+export function middleware(req: NextRequest) {
+  const token = req.cookies.get("sb-access-token")?.value; // <- must match cookie name
+  const { pathname } = req.nextUrl;
 
-export default NextAuth(authConfig).auth;
+  // Allow login page and public routes
+  if (pathname.startsWith("/login") || pathname.startsWith("/_next")) {
+    return NextResponse.next();
+  }
 
-// export function middleware(request: NextRequest) {
-//   console.log("lol!!!");
-// }
+  // Redirect if token is missing
+  if (!token && pathname.startsWith("/dashboard")) {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
+
+  return NextResponse.next();
+}
 
 export const config = {
-  // https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
-  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
-  //   runtime: "nodejs",
+  matcher: ["/dashboard/:path*"], // all dashboard routes
 };

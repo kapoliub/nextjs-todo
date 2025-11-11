@@ -3,4 +3,5 @@ export const PATHS = {
   signup: "/signup",
   welcome: "/welcome",
   checkYourEmail: "/check-your-email",
+  todos: "/todos",
 };
