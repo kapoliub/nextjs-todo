@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 
 import { getUser } from "@/lib/actions/auth";
-import TodoList from "@/app/ui/todo/list";
 import { PATHS } from "@/lib/paths";
 
 export default async function Home() {
@@ -11,9 +10,5 @@ export default async function Home() {
     redirect(PATHS.todos);
   }
 
-  return (
-    <section>
-      <TodoList />
-    </section>
-  );
+  return <section>{/* <TodoList /> */}</section>;
 }
