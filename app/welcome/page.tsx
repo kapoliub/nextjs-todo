@@ -1,9 +1,10 @@
 "use client";
 
-import { PATHS } from "@/lib/paths";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useEffect, useState } from "react";
+
+import { PATHS } from "@/lib/paths";
 
 export default function Welcome() {
   const [isHashValid, setIsHashValid] = useState(true);

@@ -13,12 +13,12 @@ export interface AuthState {
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 export async function registerUser({ email, password }: AuthState) {
@@ -115,7 +115,7 @@ export async function signOut() {
 
 export async function deleteUser() {
   const { data, error } = await supabaseAdmin.auth.admin.deleteUser(
-    "19b5b67a-977a-414b-a5e9-1bf5d5953592"
+    "19b5b67a-977a-414b-a5e9-1bf5d5953592",
   );
 
   await signOut();
