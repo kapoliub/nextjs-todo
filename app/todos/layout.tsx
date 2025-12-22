@@ -1,6 +1,7 @@
 import AddItemInput from "../ui/list/input";
 import { ListItem } from "../ui/list/list-item";
 
+import { getUser } from "@/lib/actions/auth";
 import { getUserLists } from "@/lib/actions/lists";
 
 export default async function ItemsLayout({
@@ -8,12 +9,13 @@ export default async function ItemsLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const user = await getUser();
   const { data } = await getUserLists();
 
   return (
     <div className="flex h-full w-full">
       <aside className="w-64 border-r p-4">
-        <AddItemInput type={"list"} />
+        <AddItemInput isLoggedIn={!!user} type="list" />
         <ul>
           {data?.map((item) => (
             <ListItem key={item.id} todosCount={item.todos_count} {...item} />

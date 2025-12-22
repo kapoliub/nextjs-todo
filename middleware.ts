@@ -1,22 +1,33 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+import { PATHS } from "./lib/paths";
+import { ACCESS_TOKEN_KEY } from "./lib/constants";
+
 export function middleware(req: NextRequest) {
-  const token = req.cookies.get("sb-access-token")?.value; // <- must match cookie name
+  const token = req.cookies.get(ACCESS_TOKEN_KEY)?.value; // <- must match cookie name
   const { pathname } = req.nextUrl;
 
-  // Allow login page and public routes
-  if (pathname.startsWith("/login") || pathname.startsWith("/_next")) {
-    return NextResponse.next();
-  }
+  if (token) {
+    if (pathname.startsWith(PATHS.login) || pathname.startsWith(PATHS.signup)) {
+      return NextResponse.redirect(new URL(PATHS.todos, req.url));
+    }
+  } else {
+    let url = "/";
 
-  // Redirect if token is missing
-  if (!token && pathname.startsWith("/dashboard")) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    if (pathname.startsWith(PATHS.login) || pathname.startsWith("/_next")) {
+      return NextResponse.next();
+    }
+
+    if (pathname.startsWith(PATHS.dashboard)) {
+      url = PATHS.login;
+    }
+
+    return NextResponse.redirect(new URL(url, req.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*"], // all dashboard routes
+  matcher: ["/dashboard/:path*", "/todos/:path*"], // all dashboard routes
 };

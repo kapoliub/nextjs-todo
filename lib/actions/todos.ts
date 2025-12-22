@@ -1,17 +1,20 @@
 "use server";
-
 import { createClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { format } from "date-fns";
 
 import { PATHS } from "../paths";
+import { StoredTodo } from "../helpers/localstorage";
 
 import { getUser } from "./auth";
+import { createList } from "./lists";
 
 // ------------------
 // Types
 // ------------------
 
-interface CreateTodoParams {
+export interface CreateTodoParams {
   listId: string;
   title: string;
   description?: string;
@@ -19,8 +22,9 @@ interface CreateTodoParams {
 
 interface EditTodosParams {
   id: string;
-  title: string;
+  title?: string;
   description?: string;
+  isCompleted?: boolean;
 }
 
 export interface TodoData {
@@ -68,6 +72,32 @@ export async function createTodo({
   return { data };
 }
 
+export async function syncTodosWithDB(todos: StoredTodo[]) {
+  if (!todos.length) return;
+
+  const user = await getUser();
+
+  if (!user) return { error: "Unauthorized" };
+
+  const { data } = await createList({
+    title: `Local list: ${format(new Date(), "HH:mm dd/MM/yyyy")}`,
+  });
+
+  if (!data) return { error: "Failed to create list" };
+
+  const todosToSync = todos.map(({ id: _, ...rest }) => ({
+    ...rest,
+    list_id: data?.id!,
+    owner_id: user.id,
+  }));
+
+  const { error } = await supabase.from("todos").insert(todosToSync).select();
+
+  if (error) return { error: error.message };
+
+  redirect(PATHS.todos);
+}
+
 // ------------------
 // 2️⃣ Get todos owned by the current user
 // ------------------
@@ -105,17 +135,27 @@ export async function deleteTodo(id: string) {
     return { error: error.message };
   }
 
-  revalidatePath(PATHS.todos);
+  revalidatePath(`${PATHS.todos}/${id}`);
 }
 
-export async function editTodo({ id, title, description }: EditTodosParams) {
+export async function editTodo({
+  id,
+  title,
+  description,
+  isCompleted,
+}: EditTodosParams) {
   const user = await getUser();
 
   if (!user) return { error: "Unauthorized" };
 
   const { error } = await supabase
     .from("todos")
-    .update({ title, description })
+    .update({
+      title,
+      description,
+      last_edit_by: user.id,
+      is_completed: isCompleted,
+    })
     .eq("id", id)
     .eq("owner_id", user.id);
 
@@ -123,20 +163,5 @@ export async function editTodo({ id, title, description }: EditTodosParams) {
     return { error: error.message };
   }
 
-  revalidatePath(PATHS.todos);
-}
-
-export async function getTodosCount(listId: string) {
-  const { count, error } = await supabase
-    .from("todos")
-    .select("*", { count: "exact", head: true }) // head: true avoids returning rows
-    .eq("list_id", listId);
-
-  if (error) {
-    console.error(error);
-
-    return 0;
-  }
-
-  return count ?? 0;
+  revalidatePath(`${PATHS.todos}/${id}`);
 }

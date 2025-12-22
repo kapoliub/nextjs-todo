@@ -6,11 +6,17 @@ import { Card, CardBody } from "@heroui/card";
 import { FormEvent, useState, ChangeEvent } from "react";
 import z from "zod";
 import { addToast } from "@heroui/toast";
-import { AuthError } from "@supabase/supabase-js";
+import { redirect } from "next/navigation";
 
 import PasswordInput from "./password-input";
 
 import { type AuthState } from "@/lib/actions/auth";
+import { syncTodosWithDB } from "@/lib/actions/todos";
+import {
+  clearTodosFromLocalStorage,
+  getStoredTodosFromLocalStorage,
+} from "@/lib/helpers/localstorage";
+import { PATHS } from "@/lib/paths";
 
 interface AuthFormErrors {
   email?: string[];
@@ -20,7 +26,7 @@ interface AuthFormErrors {
 
 interface AuthFormProps {
   type: "signup" | "login";
-  onSubmit: (data: AuthState) => Promise<AuthError>;
+  onSubmit: (data: AuthState) => Promise<{ message: string }>;
 }
 
 type InputComponent = "input" | "passwordInput";
@@ -111,6 +117,12 @@ export default function AuthForm({ type, onSubmit }: AuthFormProps) {
         color: "danger",
         description: message,
       });
+    } else {
+      const todos = getStoredTodosFromLocalStorage();
+
+      clearTodosFromLocalStorage();
+      await syncTodosWithDB(todos);
+      redirect(PATHS.todos);
     }
   };
 

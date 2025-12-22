@@ -1,14 +1,22 @@
 "use server";
 
-import { createClient } from "@supabase/supabase-js";
+import { createClient, Provider } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { CredentialResponse } from "google-one-tap";
+
+import { saveTokens } from "../utils/tokens";
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "../constants";
 
 import { PATHS } from "@/lib/paths";
 
 export interface AuthState {
   email: string;
   password: string;
+}
+
+export interface OAuthState {
+  provider?: Provider;
 }
 
 const supabase = createClient(
@@ -20,6 +28,38 @@ const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
+
+export async function checkCurrentSession() {
+  const { data, error } = await supabase.auth.getSession();
+
+  if (error) {
+    console.error("Error getting session", error);
+  }
+
+  return !!data.session;
+}
+
+export async function signInWithGoogle(
+  response: CredentialResponse,
+  nonce: string,
+) {
+  try {
+    const { data, error } = await supabase.auth.signInWithIdToken({
+      provider: "google",
+      token: response.credential,
+      nonce,
+    });
+
+    if (error) throw error;
+    await saveTokens(data.session);
+
+    // redirect to protected page
+  } catch (error) {
+    console.error("Error logging in with Google One Tap", error);
+  } finally {
+    redirect(PATHS.todos);
+  }
+}
 
 export async function registerUser({ email, password }: AuthState) {
   const { error } = await supabase.auth.signUp({
@@ -44,34 +84,20 @@ export async function loginUser({ email, password }: AuthState) {
     password,
   });
 
-  if (error) return error;
+  if (error) return { message: error.message };
 
-  // Save session in HTTP-only cookies
-  const cookieStore = await cookies();
+  await saveTokens(data.session);
 
-  cookieStore.set("sb-access-token", data.session?.access_token!, {
-    httpOnly: true,
-    path: "/",
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-  });
-  cookieStore.set("sb-refresh-token", data.session?.refresh_token!, {
-    httpOnly: true,
-    path: "/",
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-  });
-
-  redirect(PATHS.todos);
+  return { message: "" };
 }
 
 export async function getUser() {
   const cookieStore = await cookies();
-  const access_token = cookieStore.get("sb-access-token")?.value;
-  const refresh_token = cookieStore.get("sb-refresh-token")?.value;
+  const access_token = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
+  const refresh_token = cookieStore.get(REFRESH_TOKEN_KEY)?.value;
 
   if (!access_token || !refresh_token) {
-    return null; // No session available
+    return; // No session available
   }
 
   // Restore session for this request
@@ -80,8 +106,6 @@ export async function getUser() {
   const { data, error } = await supabase.auth.getUser();
 
   if (error) {
-    console.error(error);
-
     return;
   }
 
@@ -92,8 +116,8 @@ export async function signOut() {
   const cookieStore = await cookies();
 
   // 1. Restore session if needed
-  const access_token = cookieStore.get("sb-access-token")?.value;
-  const refresh_token = cookieStore.get("sb-refresh-token")?.value;
+  const access_token = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
+  const refresh_token = cookieStore.get(REFRESH_TOKEN_KEY)?.value;
 
   if (access_token && refresh_token) {
     await supabase.auth.setSession({ access_token, refresh_token });
@@ -106,8 +130,8 @@ export async function signOut() {
   if (error) console.error("Sign-out error:", error);
 
   // 3. Clear cookies
-  cookieStore.delete("sb-access-token");
-  cookieStore.delete("sb-refresh-token");
+  cookieStore.delete(ACCESS_TOKEN_KEY);
+  cookieStore.delete(REFRESH_TOKEN_KEY);
 
   // 4. Redirect to login page
   redirect(PATHS.login);

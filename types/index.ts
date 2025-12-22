@@ -4,4 +4,4 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };
 
-export type ServerResponse<T> = Promise<{ data?: T } | { error?: string }>;
+export type ServerResponse<T> = Promise<{ data?: T; error?: string }>;

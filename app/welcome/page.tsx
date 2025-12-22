@@ -23,8 +23,6 @@ export default function Welcome() {
     setIsHashValid(allPresent);
   }, []);
 
-  console.log("Redirect url: ", process.env.NEXT_PUBLIC_VERCEL_URL);
-
   if (typeof window !== "undefined" && !isHashValid) {
     notFound();
   }

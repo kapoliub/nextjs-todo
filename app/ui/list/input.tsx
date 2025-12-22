@@ -7,25 +7,49 @@ import { useParams } from "next/navigation";
 
 import { PlusIcon } from "@/app/ui/icons";
 import { createList } from "@/lib/actions/lists";
-import { createTodo } from "@/lib/actions/todos";
+import { createTodo, CreateTodoParams } from "@/lib/actions/todos";
 
+type LocalTodo = Omit<CreateTodoParams, "listId"> & {
+  id?: string;
+};
 type InputType = "list" | "todo";
 
 interface AddItemInputProps {
   type: InputType;
+  isLoggedIn: boolean;
+  onSave?: (todo: LocalTodo) => void;
 }
 
-export default function AddItemInput({ type }: AddItemInputProps) {
+export default function AddItemInput({
+  type,
+  isLoggedIn,
+  onSave,
+}: AddItemInputProps) {
   const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const params = useParams();
 
+  const isButtonDisabled = !inputValue.trim().length;
+
   const handleAddList = async (value: string) => {
-    await createList({ title: value });
+    const formattedValue = value.trim();
+
+    if (!formattedValue) return;
+
+    await createList({ title: formattedValue });
   };
 
   const handleAddTodo = async (value: string) => {
+    const formattedValue = value.trim();
+
+    if (!formattedValue) return;
+
+    if (!isLoggedIn && onSave) {
+      onSave({ title: formattedValue });
+    }
+
     if (!params.id) return;
-    await createTodo({ title: value, listId: params.id as string });
+    await createTodo({ title: formattedValue, listId: params.id as string });
   };
 
   const handlersMap = {
@@ -39,9 +63,11 @@ export default function AddItemInput({ type }: AddItemInputProps) {
     setInputValue(value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setInputValue("");
-    handlersMap[type](inputValue);
+    setIsLoading(true);
+    await handlersMap[type](inputValue);
+    setIsLoading(false);
   };
 
   return (
@@ -49,8 +75,10 @@ export default function AddItemInput({ type }: AddItemInputProps) {
       <Input color="primary" value={inputValue} onChange={handleChange} />
       <Button
         isIconOnly
+        className={`ml-1 ${isButtonDisabled && "cursor-not-allowed"}`}
         color="success"
-        disabled={!inputValue.length}
+        disabled={isButtonDisabled}
+        isLoading={isLoading}
         onPress={handleSubmit}
       >
         <PlusIcon />

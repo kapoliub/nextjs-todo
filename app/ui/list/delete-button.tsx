@@ -1,18 +1,36 @@
 "use client";
-import { Button } from "@heroui/button";
+import { redirect, useParams } from "next/navigation";
 
-import { TrashIcon } from "../icons";
+import ButtonWithModal from "../common/button-with-modal";
 
 import { deleteList } from "@/lib/actions/lists";
+import { PATHS } from "@/lib/paths";
 
 interface DeleteListButtonProps {
   itemId: string;
 }
 
 export default function DeleteListButton({ itemId }: DeleteListButtonProps) {
+  const params = useParams();
+
+  const handleSubmitClick = async () => {
+    await deleteList(itemId, itemId === params.id);
+
+    if (itemId === params.id) {
+      redirect(PATHS.todos);
+    }
+  };
+
   return (
-    <Button isIconOnly color="danger" onPress={() => deleteList(itemId)}>
-      <TrashIcon />
-    </Button>
+    <ButtonWithModal
+      buttonProps={{
+        color: "danger",
+        radius: "md",
+        size: "sm",
+      }}
+      content="Are you sure you want to delete this list?"
+      title="Delete List"
+      onSubmit={handleSubmitClick}
+    />
   );
 }

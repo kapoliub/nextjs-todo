@@ -6,6 +6,7 @@ import { Providers } from "./providers";
 
 import Navbar from "@/app/ui/navbar/navbar";
 import { fontSans } from "@/config/fonts";
+import OneTapComponent from "@/app/ui/auth/google-one-tap";
 
 // export const metadata: Metadata = {
 //   title: {
@@ -41,9 +42,10 @@ export default function RootLayout({
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
           <Navbar />
-          <div className="w-full h-max h-full flex items-center justify-center p-4">
+          <div className="w-full h-max flex items-center justify-center p-4">
             {children}
           </div>
+          <OneTapComponent />
         </Providers>
       </body>
     </html>

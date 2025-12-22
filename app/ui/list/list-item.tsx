@@ -16,15 +16,16 @@ export async function ListItem({ id, title, todosCount }: ListItemProps) {
   return (
     <li>
       <Card className="my-2">
-        <CardBody className="p-2 flex flex-row justify-between align-center">
+        <CardBody className="p-1 pl-0 flex flex-row justify-between align-center">
           <Link
             className="flex flex-1 align-center"
             href={`${PATHS.todos}/${id}`}
           >
             <Chip
-              className="relative -top-2 -left-2"
-              color="secondary"
+              className="p-0 mr-1 -my-1 h-10"
+              color="danger"
               radius="md"
+              size="md"
               variant="flat"
             >
               {todosCount}

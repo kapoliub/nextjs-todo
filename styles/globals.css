@@ -2,6 +2,10 @@
 
 @config "../tailwind.config.js";
 
+html {
+  scrollbar-gutter: auto !important;
+}
+
 body > div {
   height: 100%;
 }

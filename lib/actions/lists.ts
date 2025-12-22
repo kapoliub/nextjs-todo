@@ -1,5 +1,4 @@
 "use server";
-
 import { createClient } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
@@ -8,11 +7,13 @@ import { PATHS } from "../paths";
 
 import { getUser } from "./auth";
 
+import { ServerResponse } from "@/types/index";
+
 // ------------------
 // Types
 // ------------------
 
-interface CreateListParams {
+export interface CreateListParams {
   title: string;
 }
 
@@ -60,7 +61,10 @@ const supabase = createClient(
 // ------------------
 // 1️⃣ Create a new list
 // ------------------
-export async function createList({ title }: CreateListParams) {
+export async function createList({ title }: CreateListParams): Promise<{
+  data?: ListData;
+  error?: string;
+}> {
   const user = await getUser();
 
   if (!user) return { error: "Unauthorized" };
@@ -75,16 +79,13 @@ export async function createList({ title }: CreateListParams) {
 
   revalidatePath(PATHS.todos);
 
-  return data as ListData;
+  return { data };
 }
 
 // ------------------
 // 2️⃣ Get lists owned by the current user
 // ------------------
-export async function getUserLists(): Promise<{
-  data?: ListData[];
-  error?: string;
-}> {
+export async function getUserLists(): ServerResponse<ListData[]> {
   const user = await getUser();
 
   if (!user) return { error: "Unauthorized" };
@@ -100,7 +101,7 @@ export async function getUserLists(): Promise<{
   return { data };
 }
 
-export async function deleteList(id: string) {
+export async function deleteList(id: string, isSelected: boolean) {
   const user = await getUser();
 
   if (!user) return { error: "Unauthorized" };
@@ -115,10 +116,11 @@ export async function deleteList(id: string) {
     return { error: error.message };
   }
 
-  if (status === 204) {
-    revalidatePath(PATHS.todos);
+  if (status === 204 && isSelected) {
     redirect(PATHS.todos);
   }
+
+  revalidatePath(PATHS.todos);
 
   // return response;
 }
