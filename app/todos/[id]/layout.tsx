@@ -7,7 +7,7 @@ export default async function TodosLayout({
 }) {
   return (
     <div className="flex flex-col h-full w-full">
-      <AddItemInput type="todo" />
+      <AddItemInput isLoggedIn type="todo" />
       {children}
     </div>
   );

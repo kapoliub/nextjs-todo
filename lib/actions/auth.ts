@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 "use server";
 
 import { createClient, Provider } from "@supabase/supabase-js";
@@ -126,7 +127,6 @@ export async function signOut() {
   // 2. Call Supabase to revoke tokens
   const { error } = await supabase.auth.signOut();
 
-  // eslint-disable-next-line no-console
   if (error) console.error("Sign-out error:", error);
 
   // 3. Clear cookies
@@ -145,10 +145,8 @@ export async function deleteUser() {
   await signOut();
 
   if (error) {
-    // eslint-disable-next-line no-console
     console.error("Failed to delete user:", error);
   } else {
-    // eslint-disable-next-line no-console
     console.log("Deleted user:", data);
   }
 }

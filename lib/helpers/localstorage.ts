@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 "use client";
 
 import { LS_TODOS_KEY } from "../constants";
