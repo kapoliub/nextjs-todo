@@ -1,14 +1,10 @@
 /* eslint-disable no-console */
 "use server";
 
-import { createClient, Provider } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
 import { CredentialResponse } from "google-one-tap";
 
-import { saveTokens } from "../utils/tokens";
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "../constants";
-
+import { createClient } from "@/lib/supabase/server";
 import { PATHS } from "@/lib/paths";
 
 export interface AuthState {
@@ -16,54 +12,48 @@ export interface AuthState {
   password: string;
 }
 
-export interface OAuthState {
-  provider?: Provider;
-}
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-);
-
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
-
 export async function checkCurrentSession() {
-  const { data, error } = await supabase.auth.getSession();
+  const { auth } = await createClient();
+  const {
+    data: { user },
+    error,
+  } = await auth.getUser();
 
-  if (error) {
-    console.error("Error getting session", error);
-  }
+  if (error) return false;
 
-  return !!data.session;
+  return !!user;
 }
 
 export async function signInWithGoogle(
   response: CredentialResponse,
   nonce: string,
 ) {
+  const { auth } = await createClient();
+  let success = false;
+
   try {
-    const { data, error } = await supabase.auth.signInWithIdToken({
+    const { error } = await auth.signInWithIdToken({
       provider: "google",
       token: response.credential,
       nonce,
     });
 
     if (error) throw error;
-    await saveTokens(data.session);
-
-    // redirect to protected page
+    success = true;
   } catch (error) {
     console.error("Error logging in with Google One Tap", error);
-  } finally {
+    // Handle specific error UI here if needed
+  }
+
+  if (success) {
     redirect(PATHS.todos);
   }
 }
 
 export async function registerUser({ email, password }: AuthState) {
-  const { error } = await supabase.auth.signUp({
+  const { auth } = await createClient();
+
+  const { error } = await auth.signUp({
     email,
     password,
     options: {
@@ -80,79 +70,60 @@ export async function registerUser({ email, password }: AuthState) {
 }
 
 export async function loginUser({ email, password }: AuthState) {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) return { message: error.message };
-
-  await saveTokens(data.session);
 
   return { message: "" };
 }
 
 export async function getUser() {
-  const cookieStore = await cookies();
-  const access_token = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
-  const refresh_token = cookieStore.get(REFRESH_TOKEN_KEY)?.value;
+  const { auth } = await createClient();
+  // @supabase/ssr automatically reads cookies and restores session
+  const {
+    data: { user },
+    error,
+  } = await auth.getUser();
 
-  if (!access_token || !refresh_token) {
-    return; // No session available
-  }
+  if (error) return null;
 
-  // Restore session for this request
-  await supabase.auth.setSession({ access_token, refresh_token });
-
-  const { data, error } = await supabase.auth.getUser();
-
-  if (error) {
-    return;
-  }
-
-  return data.user;
+  return user;
 }
 
 export async function signOut() {
-  const cookieStore = await cookies();
+  const { auth } = await createClient();
 
-  // 1. Restore session if needed
-  const access_token = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
-  const refresh_token = cookieStore.get(REFRESH_TOKEN_KEY)?.value;
+  // 1. Revoke on server
+  await auth.signOut();
 
-  if (access_token && refresh_token) {
-    await supabase.auth.setSession({ access_token, refresh_token });
-  }
-
-  // 2. Call Supabase to revoke tokens
-  const { error } = await supabase.auth.signOut();
-
-  if (error) console.error("Sign-out error:", error);
-
-  // 3. Clear cookies
-  cookieStore.delete(ACCESS_TOKEN_KEY);
-  cookieStore.delete(REFRESH_TOKEN_KEY);
-
-  // 4. Redirect to login page
+  // 2. Clear cookies and redirect
+  // Note: createClient's setAll logic usually handles cookie clearing on signOut,
+  // but a redirect is required to refresh the client-side state.
   redirect(PATHS.login);
 }
 
-export async function deleteUser() {
-  const { data, error } = await supabaseAdmin.auth.admin.deleteUser(
-    "19b5b67a-977a-414b-a5e9-1bf5d5953592",
-  );
+// export async function deleteUser() {
+//   const { auth } = await createClient("admin");
 
-  await signOut();
+//   const { data, error } = await auth.admin.deleteUser(
+//     "19b5b67a-977a-414b-a5e9-1bf5d5953592",
+//   );
 
-  if (error) {
-    console.error("Failed to delete user:", error);
-  } else {
-    console.log("Deleted user:", data);
-  }
-}
+//   await signOut();
+
+//   if (error) {
+//     console.error("Failed to delete user:", error);
+//   } else {
+//     console.log("Deleted user:", data);
+//   }
+// }
 
 // export async function confirmUser() {
-//   const { data, error } = await supabase.auth.verifyOtp({
+//   const { auth } = await createClient();
+
+//   const { data, error } = await auth.verifyOtp({
 //     token: "295423fc60424221474168608e1001d63dc4a27c11ac3602ff9da306",
 //     type: "email",
 //     email: "testuser124@gmail.com",

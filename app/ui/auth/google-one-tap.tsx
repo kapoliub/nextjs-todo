@@ -1,5 +1,4 @@
 "use client";
-
 import type { accounts, CredentialResponse } from "google-one-tap";
 
 import Script from "next/script";

@@ -20,6 +20,7 @@ export default function TodoList() {
   const handleSaveTodos = (todo: Omit<CreateTodoParams, "listId">) => {
     const newTodo: StoredTodo = {
       ...todo,
+      description: todo.description || null,
       id: crypto.randomUUID(),
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),

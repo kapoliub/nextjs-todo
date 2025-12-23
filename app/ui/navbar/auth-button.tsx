@@ -10,15 +10,18 @@ export default function AuthButton() {
   const pathname = usePathname();
   const isSignupPage = pathname === PATHS.signup;
   const isWelcomePage = pathname === PATHS.welcome;
+  const isRootPage = pathname === "/";
+
+  const showLoginButton = isSignupPage || isWelcomePage || isRootPage;
 
   return (
     <Button
       as={Link}
       color="primary"
-      href={isSignupPage || isWelcomePage ? PATHS.login : PATHS.signup}
+      href={showLoginButton ? PATHS.login : PATHS.signup}
       variant="flat"
     >
-      {isSignupPage || isWelcomePage ? "Login" : "Sign Up"}
+      {showLoginButton ? "Login" : "Sign Up"}
     </Button>
   );
 }

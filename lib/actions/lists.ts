@@ -1,30 +1,13 @@
 "use server";
-import { createClient } from "@supabase/supabase-js";
+
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 import { PATHS } from "../paths";
+import { createClient } from "../supabase/server";
 
-import { getUser } from "./auth";
-
-import { ServerResponse } from "@/types/index";
-
-// ------------------
-// Types
-// ------------------
-
-export interface CreateListParams {
-  title: string;
-}
-
-export interface ListData {
-  title: string;
-  id: string;
-  owner_id: string;
-  created_at: string;
-  updated_at: string;
-  todos_count: number;
-}
+import { getUserId } from "@/lib/helpers/user-info";
+import { InsertList } from "@/types";
 
 export interface ShareListData {
   listId: string;
@@ -32,46 +15,15 @@ export interface ShareListData {
   canEdit?: boolean;
 }
 
-// ------------------
-// Supabase clients
-// ------------------
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-);
+export async function createList(title: InsertList["title"]) {
+  const supabase = await createClient();
+  const userId = await getUserId(supabase.auth);
 
-// Helper to restore user session from cookies
-// async function getSupabaseUser() {
-//   const cookieStore = await cookies();
-//   const access_token = cookieStore.get("sb-access-token")?.value;
-//   const refresh_token = cookieStore.get("sb-refresh-token")?.value;
-
-//   if (!access_token || !refresh_token) {
-//     return { user: null };
-//   }
-
-//   await supabase.auth.setSession({ access_token, refresh_token });
-//   const { data, error } = await supabase.auth.getUser();
-
-//   if (error || !data?.user) return { user: null };
-
-//   return { user: data.user };
-// }
-
-// ------------------
-// 1️⃣ Create a new list
-// ------------------
-export async function createList({ title }: CreateListParams): Promise<{
-  data?: ListData;
-  error?: string;
-}> {
-  const user = await getUser();
-
-  if (!user) return { error: "Unauthorized" };
+  if (!userId) return { error: "Unauthorized" };
 
   const { data, error } = await supabase
     .from("lists")
-    .insert({ title, owner_id: user.id })
+    .insert({ title, owner_id: userId })
     .select()
     .single();
 
@@ -82,18 +34,16 @@ export async function createList({ title }: CreateListParams): Promise<{
   return { data };
 }
 
-// ------------------
-// 2️⃣ Get lists owned by the current user
-// ------------------
-export async function getUserLists(): ServerResponse<ListData[]> {
-  const user = await getUser();
+export async function getUserLists() {
+  const supabase = await createClient();
+  const userId = await getUserId(supabase.auth);
 
-  if (!user) return { error: "Unauthorized" };
+  if (!userId) return { error: "Unauthorized" };
 
   const { data, error } = await supabase
     .from("lists")
     .select("*")
-    .eq("owner_id", user.id)
+    .eq("owner_id", userId)
     .order("created_at", { ascending: false });
 
   if (error) return { error: error.message };
@@ -102,15 +52,16 @@ export async function getUserLists(): ServerResponse<ListData[]> {
 }
 
 export async function deleteList(id: string, isSelected: boolean) {
-  const user = await getUser();
+  const supabase = await createClient();
+  const userId = await getUserId(supabase.auth);
 
-  if (!user) return { error: "Unauthorized" };
+  if (!userId) return { error: "Unauthorized" };
 
   const { error, status } = await supabase
     .from("lists")
     .delete()
     .eq("id", id)
-    .eq("owner_id", user.id);
+    .eq("owner_id", userId);
 
   if (error) {
     return { error: error.message };

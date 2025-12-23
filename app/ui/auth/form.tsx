@@ -168,6 +168,7 @@ export default function AuthForm({ type, onSubmit }: AuthFormProps) {
               <Component
                 key={label}
                 required
+                autoComplete={name}
                 disabled={isLoading}
                 errorMessage={() => (
                   <ul>

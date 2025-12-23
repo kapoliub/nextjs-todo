@@ -3,8 +3,9 @@
 import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
 import { Textarea } from "@heroui/input";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, RefObject, useRef, useState } from "react";
 import { Checkbox } from "@heroui/checkbox";
+import { useParams } from "next/navigation";
 
 import ButtonWithModal from "../common/button-with-modal";
 
@@ -27,8 +28,10 @@ export default function TodoItem({
 }: TodoItemProps) {
   const [isEditable, setIsEditable] = useState(false);
   const [inputValue, setInputValue] = useState(title);
-  const [isChecked, setIsChecked] = useState(todoProps.is_completed);
+  const [isChecked, setIsChecked] = useState(!!todoProps.is_completed);
   const [isLoading, setIsLoading] = useState(false);
+
+  const { id: listId } = useParams();
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -56,7 +59,7 @@ export default function TodoItem({
 
       setInputValue(formattedValue);
       setIsLoading(true);
-      await editTodo({ id, title: formattedValue });
+      await editTodo({ id, title: formattedValue }, listId as string);
       onEdit?.({ ...todoProps, id, title: formattedValue });
       setIsLoading(false);
     }
@@ -64,7 +67,7 @@ export default function TodoItem({
 
   const handleDelete = async () => {
     setIsLoading(true);
-    await deleteTodo(id);
+    await deleteTodo(id, listId as string);
     onDelete?.(id);
     setIsLoading(false);
   };
@@ -77,7 +80,8 @@ export default function TodoItem({
   const handleCheckboxChange = async (value: boolean) => {
     setIsChecked(value);
     setIsLoading(true);
-    await editTodo({ id, isCompleted: value });
+    await editTodo({ id, is_completed: value }, listId as string);
+    onEdit?.({ ...todoProps, id, title, is_completed: value });
     setIsLoading(false);
   };
 
@@ -101,7 +105,7 @@ export default function TodoItem({
         {isEditable ? (
           <Textarea
             ref={inputRef}
-            baseRef={editableRef}
+            baseRef={editableRef as RefObject<HTMLDivElement>}
             classNames={{
               base: "px-1 pb-1",
               input: "text-base",
@@ -114,7 +118,7 @@ export default function TodoItem({
           />
         ) : (
           <div
-            ref={editableRef}
+            ref={editableRef as RefObject<HTMLDivElement>}
             className={`flex-1 m-auto ${isChecked ? "cursor-not-allowed" : "cursor-text"} mx-2 my-2 border-b-2 border-transparent`}
             role="presentation"
             onClick={handleEdit}
@@ -123,19 +127,15 @@ export default function TodoItem({
           </div>
         )}
         {isEditable ? (
-          <>
-            <Button
-              isIconOnly
-              color="primary"
-              disabled={isLoading}
-              onPress={handleSave}
-            >
-              <CheckIcon />
-            </Button>
-            <Button isIconOnly disabled={isLoading} onPress={handleCancelEdit}>
-              X
-            </Button>
-          </>
+          <Button
+            ref={editableRef as RefObject<HTMLButtonElement>}
+            isIconOnly
+            color="primary"
+            disabled={isLoading}
+            onPress={handleSave}
+          >
+            <CheckIcon />
+          </Button>
         ) : (
           <ButtonWithModal
             buttonProps={{ color: "danger" }}
