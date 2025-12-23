@@ -3,6 +3,7 @@
 
 import { redirect } from "next/navigation";
 import { CredentialResponse } from "google-one-tap";
+import { SupabaseClient, UserAttributes } from "@supabase/supabase-js";
 
 import { createClient } from "@/lib/supabase/server";
 import { PATHS } from "@/lib/paths";
@@ -79,17 +80,28 @@ export async function loginUser({ email, password }: AuthState) {
   return { message: "" };
 }
 
-export async function getUser() {
-  const { auth } = await createClient();
-  // @supabase/ssr automatically reads cookies and restores session
+export async function getUser(auth?: SupabaseClient["auth"]) {
+  const authFn = auth || (await createClient()).auth;
+
   const {
     data: { user },
-    error,
-  } = await auth.getUser();
+  } = await authFn.getUser();
 
-  if (error) return null;
+  return user || null;
+}
 
-  return user;
+export async function updateUser(newData: UserAttributes) {
+  const { auth } = await createClient();
+
+  const { error } = await auth.updateUser({
+    ...newData,
+  });
+
+  if (error) {
+    return { message: error.message };
+  }
+
+  return { message: "" };
 }
 
 export async function signOut() {
