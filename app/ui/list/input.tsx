@@ -3,11 +3,12 @@
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { ChangeEvent, useState } from "react";
-import { useParams } from "next/navigation";
+import { redirect, useParams } from "next/navigation";
 
 import { PlusIcon } from "@/app/ui/icons";
 import { createList } from "@/lib/actions/lists";
 import { createTodo, CreateTodoParams } from "@/lib/actions/todos";
+import { PATHS } from "@/lib/paths";
 
 type LocalTodo = Omit<CreateTodoParams, "listId"> & {
   id?: string;
@@ -36,7 +37,7 @@ export default function AddItemInput({
 
     if (!formattedValue) return;
 
-    await createList({ title: formattedValue });
+    await createList(formattedValue);
   };
 
   const handleAddTodo = async (value: string) => {
@@ -68,6 +69,7 @@ export default function AddItemInput({
     setIsLoading(true);
     await handlersMap[type](inputValue);
     setIsLoading(false);
+    redirect(`${PATHS.todos}/${params.id}`);
   };
 
   return (

@@ -5,4 +5,5 @@ export const PATHS = {
   checkYourEmail: "/check-your-email",
   todos: "/todos",
   dashboard: "/dashboard",
+  profile: "/profile",
 };

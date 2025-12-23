@@ -3,10 +3,10 @@
 
 import { LS_TODOS_KEY } from "../constants";
 
-import { TodoData } from "@/lib/actions/todos";
+import { Todo } from "@/types";
 
 export interface StoredTodo
-  extends Omit<TodoData, "list_id" | "owner_id" | "last_edit_by"> {
+  extends Omit<Todo, "list_id" | "owner_id" | "last_edit_by"> {
   id: string;
 }
 
