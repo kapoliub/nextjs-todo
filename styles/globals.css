@@ -6,6 +6,12 @@ html {
   scrollbar-gutter: auto !important;
 }
 
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
 body > div {
   height: 100%;
 }

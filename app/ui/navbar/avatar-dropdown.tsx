@@ -1,5 +1,4 @@
 "use client";
-
 import { Avatar } from "@heroui/avatar";
 import {
   Dropdown,
@@ -10,8 +9,8 @@ import {
 
 import { signOut } from "@/lib/actions/auth";
 
-interface User {
-  email: string;
+interface AvatarDropdownProps {
+  name: string;
 }
 
 const dropdownItems = [
@@ -19,13 +18,12 @@ const dropdownItems = [
   { label: "Logout", type: "button", action: signOut },
 ];
 
-export default function AvatarDropdown({ email }: User) {
+export default function AvatarDropdown({ name }: AvatarDropdownProps) {
   return (
     <Dropdown>
       <DropdownTrigger>
-        <Avatar className="cursor-pointer" color="primary" name={email} />
+        <Avatar className="cursor-pointer" color="primary" name={name} />
       </DropdownTrigger>
-      {/* <ThemeSwitcher /> */}
 
       <DropdownMenu aria-label="Dynamic Actions" items={dropdownItems}>
         {({ label, href, type, action }) => (

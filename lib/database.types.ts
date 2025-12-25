@@ -20,7 +20,7 @@ export type Database = {
           id: string;
           owner_id: string;
           title: string;
-          todos_count: number;
+          todos_count: Json;
           updated_at: string | null;
         };
         Insert: {
@@ -28,7 +28,7 @@ export type Database = {
           id?: string;
           owner_id: string;
           title: string;
-          todos_count?: number;
+          todos_count?: Json;
           updated_at?: string | null;
         };
         Update: {
@@ -36,7 +36,7 @@ export type Database = {
           id?: string;
           owner_id?: string;
           title?: string;
-          todos_count?: number;
+          todos_count?: Json;
           updated_at?: string | null;
         };
         Relationships: [];
@@ -90,6 +90,10 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      adjust_todo_json_count: {
+        Args: { current_count: Json; delta: number; is_comp: boolean };
+        Returns: Json;
+      };
       is_list_accessible: { Args: { p_list_id: string }; Returns: boolean };
     };
     Enums: {

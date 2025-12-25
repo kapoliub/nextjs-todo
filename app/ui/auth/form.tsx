@@ -15,8 +15,9 @@ import { syncTodosWithDB } from "@/lib/actions/todos";
 import {
   clearTodosFromLocalStorage,
   getStoredTodosFromLocalStorage,
-} from "@/lib/helpers/localstorage";
+} from "@/lib/utils/local-storage";
 import { PATHS } from "@/lib/paths";
+import { EMAIL_SCHEMA, PASSWORD_SCHEMA } from "@/lib/utils/input-validations";
 
 interface AuthFormErrors {
   email?: string[];
@@ -36,18 +37,6 @@ type InputsList = {
   name: keyof AuthFormErrors;
   component: InputComponent;
 }[];
-
-const passwordSchema = z
-  .string()
-  .min(8, "Password must be at least 8 characters long")
-  .max(32, "Password cannot exceed 32 characters")
-  .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-  .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-  .regex(/[0-9]/, "Password must contain at least one number")
-  .regex(
-    /[^A-Za-z0-9]/,
-    "Password must contain at least one special character",
-  );
 
 const inputs: InputsList = [
   {
@@ -74,8 +63,8 @@ export default function AuthForm({ type, onSubmit }: AuthFormProps) {
   const isSignUpForm = type === "signup";
 
   const baseSignUpFormSchema = z.object({
-    email: z.string().email("Invalid email address"),
-    password: passwordSchema,
+    email: EMAIL_SCHEMA,
+    password: PASSWORD_SCHEMA,
     confirmPassword: isSignUpForm ? z.string() : z.undefined(),
   });
 

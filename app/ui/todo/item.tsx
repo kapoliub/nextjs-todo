@@ -2,16 +2,16 @@
 
 import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
-import { Textarea } from "@heroui/input";
-import { ChangeEvent, RefObject, useRef, useState } from "react";
+import { RefObject, useState } from "react";
 import { Checkbox } from "@heroui/checkbox";
 import { useParams } from "next/navigation";
 
 import ButtonWithModal from "../common/button-with-modal";
+import EditableText from "../common/editable-text";
 
 import { CheckIcon } from "@/app/ui/icons";
 import { deleteTodo, editTodo } from "@/lib/actions/todos";
-import { StoredTodo } from "@/lib/helpers/localstorage";
+import { StoredTodo } from "@/lib/utils/local-storage";
 import { useClickOutside } from "@/lib/hooks/use-outside-click";
 
 export interface TodoItemProps extends StoredTodo {
@@ -33,22 +33,9 @@ export default function TodoItem({
 
   const { id: listId } = useParams();
 
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
   const handleEdit = () => {
     if (isChecked || isLoading) return;
     setIsEditable(true);
-
-    setTimeout(() => {
-      const input = inputRef.current;
-
-      input?.focus();
-      input?.setSelectionRange(input.value.length, input.value.length);
-    }, 100);
   };
 
   const handleSave = async () => {
@@ -102,30 +89,20 @@ export default function TodoItem({
           isSelected={isChecked}
           onValueChange={handleCheckboxChange}
         />
-        {isEditable ? (
-          <Textarea
-            ref={inputRef}
-            baseRef={editableRef as RefObject<HTMLDivElement>}
-            classNames={{
-              base: "px-1 pb-1",
-              input: "text-base",
-              innerWrapper: "flex items-center",
-            }}
-            minRows={1}
-            value={inputValue}
-            variant="underlined"
-            onChange={handleInputChange}
-          />
-        ) : (
+        <EditableText
+          excludeRef={editableRef as RefObject<HTMLDivElement>}
+          isActive={isEditable}
+          value={inputValue}
+          onInputChange={setInputValue}
+        >
           <div
-            ref={editableRef as RefObject<HTMLDivElement>}
-            className={`flex-1 m-auto ${isChecked ? "cursor-not-allowed" : "cursor-text"} mx-2 my-2 border-b-2 border-transparent`}
+            className={`${isChecked ? "cursor-not-allowed" : "cursor-text"}`}
             role="presentation"
             onClick={handleEdit}
           >
             <p className="whitespace-pre-line text-6">{inputValue}</p>
           </div>
-        )}
+        </EditableText>
         {isEditable ? (
           <Button
             ref={editableRef as RefObject<HTMLButtonElement>}

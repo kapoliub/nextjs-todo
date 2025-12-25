@@ -4,18 +4,22 @@ import { format } from "date-fns";
 import { revalidatePath } from "next/cache";
 
 import { PATHS } from "../paths";
-import { StoredTodo } from "../helpers/localstorage";
 
 import { createList } from "./lists";
+import { getUser } from "./auth";
 
 import { createClient } from "@/lib/supabase/server";
-import { getUserId } from "@/lib/helpers/user-info";
 import { UpdateTodo } from "@/types";
+import { StoredTodo } from "@/lib/utils/local-storage";
 
 export interface CreateTodoParams {
   listId: string;
   title: string;
   description?: string;
+}
+
+interface EditTodoParams extends UpdateTodo {
+  id: string;
 }
 
 export async function createTodo({
@@ -24,18 +28,17 @@ export async function createTodo({
   description,
 }: CreateTodoParams) {
   const supabase = await createClient();
-  const userId = await getUserId(supabase.auth);
+  const user = await getUser(supabase.auth);
 
-  if (!userId) return { error: "Unauthorized" };
+  if (!user) return { error: "Unauthorized" };
 
-  // Supabase now knows that 'data' is of type 'Todo' (Row)
   const { data, error } = await supabase
     .from("todos")
     .insert({
       title,
       list_id: listId,
       description,
-      owner_id: userId,
+      owner_id: user.id,
     })
     .select()
     .single();
@@ -44,16 +47,16 @@ export async function createTodo({
 
   revalidatePath(`${PATHS.todos}/${listId}`);
 
-  return { data }; // data is typed as Todo
+  return { data };
 }
 
 export async function syncTodosWithDB(todos: StoredTodo[]) {
   if (!todos.length) return;
 
   const supabase = await createClient();
-  const userId = await getUserId(supabase.auth);
+  const user = await getUser(supabase.auth);
 
-  if (!userId) return { error: "Unauthorized" };
+  if (!user) return { error: "Unauthorized" };
 
   const { data } = await createList(
     `Local list: ${format(new Date(), "HH:mm dd/MM/yyyy")}`,
@@ -63,8 +66,8 @@ export async function syncTodosWithDB(todos: StoredTodo[]) {
 
   const todosToSync = todos.map(({ id: _, ...rest }) => ({
     ...rest,
-    list_id: data?.id!,
-    owner_id: userId,
+    list_id: data.id,
+    owner_id: user.id,
   }));
 
   const { error } = await supabase.from("todos").insert(todosToSync).select();
@@ -74,20 +77,16 @@ export async function syncTodosWithDB(todos: StoredTodo[]) {
   redirect(PATHS.todos);
 }
 
-// ------------------
-// 2️⃣ Get todos owned by the current user
-// ------------------
 export async function getListTodos(id: string) {
   const supabase = await createClient();
-  const userId = await getUserId(supabase.auth);
+  const user = await getUser(supabase.auth);
 
-  if (!userId) return { error: "Unauthorized" };
-
+  if (!user) return { error: "Unauthorized" };
   const { data: list } = await supabase
     .from("lists")
     .select("*")
     .eq("id", id)
-    .eq("owner_id", userId)
+    .eq("owner_id", user.id)
     .single();
 
   if (!list) redirect(PATHS.todos);
@@ -106,15 +105,15 @@ export async function getListTodos(id: string) {
 
 export async function deleteTodo(id: string, listId: string) {
   const supabase = await createClient();
-  const userId = await getUserId(supabase.auth);
+  const user = await getUser(supabase.auth);
 
-  if (!userId) return { error: "Unauthorized" };
+  if (!user) return { error: "Unauthorized" };
 
   const { error } = await supabase
     .from("todos")
     .delete()
     .eq("id", id)
-    .eq("owner_id", userId);
+    .eq("owner_id", user.id);
 
   if (error) {
     return { error: error.message };
@@ -124,29 +123,26 @@ export async function deleteTodo(id: string, listId: string) {
 }
 
 export async function editTodo(
-  { id, title, description, is_completed }: UpdateTodo,
+  { id, title, description, is_completed }: EditTodoParams,
   listId: string,
 ) {
   const supabase = await createClient();
-  const userId = await getUserId(supabase.auth);
+  const user = await getUser(supabase.auth);
 
-  if (!userId) return { error: "Unauthorized" };
-  if (!id) return { error: "Todo ID is required" };
+  if (!user) return { error: "Unauthorized" };
 
   const { error } = await supabase
     .from("todos")
     .update({
       title,
       description,
-      last_edit_by: userId,
+      last_edit_by: user.id,
       is_completed,
     })
     .eq("id", id)
-    .eq("owner_id", userId);
+    .eq("owner_id", user.id);
 
-  if (error) {
-    return { error: error.message };
-  }
+  if (error) return { error: error.message };
 
   revalidatePath(`${PATHS.todos}/${listId}`);
 }

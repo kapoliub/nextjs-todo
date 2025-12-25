@@ -1,27 +1,32 @@
 import AddItemInput from "../ui/list/input";
-import { ListItem } from "../ui/list/list-item";
+import Sidebar from "../ui/common/sidebar";
 
-import { getUser } from "@/lib/actions/auth";
+import ListItem from "@/app/ui/list/list-item";
 import { getUserLists } from "@/lib/actions/lists";
+import { TodosCount } from "@/types";
 
 export default async function ItemsLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getUser();
   const { data } = await getUserLists();
 
   return (
-    <div className="flex h-full w-full">
-      <aside className="w-64 border-r p-4">
-        <AddItemInput isLoggedIn={!!user} type="list" />
-        <ul>
+    <div className="flex w-full h-full">
+      <Sidebar>
+        <div className="flex flex-col gap-2">
+          <AddItemInput type="list" />
           {data?.map((item) => (
-            <ListItem key={item.id} todosCount={item.todos_count} {...item} />
+            <ListItem
+              key={item.id}
+              // TODO: fix type casting
+              todosCount={item.todos_count as unknown as TodosCount}
+              {...item}
+            />
           ))}
-        </ul>
-      </aside>
+        </div>
+      </Sidebar>
       <main className="flex-1 p-4">{children}</main>
     </div>
   );

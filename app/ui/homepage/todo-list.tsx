@@ -8,7 +8,7 @@ import {
   getStoredTodosFromLocalStorage,
   saveTodoToLocalStorage,
   StoredTodo,
-} from "@/lib/helpers/localstorage";
+} from "@/lib/utils/local-storage";
 import { CreateTodoParams } from "@/lib/actions/todos";
 import AddItemInput from "@/app/ui/list/input";
 
@@ -51,7 +51,7 @@ export default function TodoList() {
   return (
     <div className="w-dvw px-10">
       <h1 className="text-center mb-2 font-bold">Todo List</h1>
-      <AddItemInput isLoggedIn={false} type="todo" onSave={handleSaveTodos} />
+      <AddItemInput type="localTodo" onSave={handleSaveTodos} />
       {todos.map((todo) => (
         <TodoItem
           key={todo.id}
