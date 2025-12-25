@@ -4,7 +4,8 @@ import { Button } from "@heroui/button";
 import { usePathname } from "next/navigation";
 import { NavbarItem } from "@heroui/navbar";
 
-import { PATHS } from "@/lib/paths";
+import { PAGE_NAMES, PATHS } from "@/lib/paths";
+import { getPath } from "@/lib/utils/url-parsers";
 
 interface HomepageButtonProps {
   hidden?: boolean;
@@ -12,16 +13,20 @@ interface HomepageButtonProps {
 
 export default function HomepageButton({ hidden }: HomepageButtonProps) {
   const path = usePathname();
+  const rootPath = getPath(path);
 
-  if (hidden || path.includes(PATHS.todos)) {
-    return null;
-  }
+  const pageName = PAGE_NAMES[rootPath] ?? "";
+
+  const showButton = !hidden && !path.includes(PATHS.todos);
 
   return (
-    <NavbarItem>
-      <Button as={Link} href={PATHS.todos}>
-        Homepage
-      </Button>
+    <NavbarItem className="flex items-center gap-4">
+      <h1 className="text-2xl/7 font-bold">{pageName}</h1>
+      {showButton && (
+        <Button as={Link} color="primary" href={PATHS.todos}>
+          Homepage
+        </Button>
+      )}
     </NavbarItem>
   );
 }

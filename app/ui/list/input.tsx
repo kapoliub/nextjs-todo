@@ -13,18 +13,18 @@ import { PATHS } from "@/lib/paths";
 type LocalTodo = Omit<CreateTodoParams, "listId"> & {
   id?: string;
 };
-type InputType = "list" | "todo";
+type ActionItem = "list" | "todo" | "localTodo";
 
 interface AddItemInputProps {
-  type: InputType;
-  isLoggedIn: boolean;
-  onSave?: (todo: LocalTodo) => void;
+  type: ActionItem;
+  onSave?: (data: LocalTodo) => void;
 }
+
+type HandlersMap = Record<ActionItem, (value: string) => Promise<unknown>>;
 
 export default function AddItemInput({
   type,
-  isLoggedIn,
-  onSave,
+  onSave = () => {},
 }: AddItemInputProps) {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -32,30 +32,21 @@ export default function AddItemInput({
 
   const isButtonDisabled = !inputValue.trim().length;
 
-  const handleAddList = async (value: string) => {
-    const formattedValue = value.trim();
-
-    if (!formattedValue) return;
-
-    await createList(formattedValue);
-  };
-
   const handleAddTodo = async (value: string) => {
-    const formattedValue = value.trim();
+    if (type === "localTodo") {
+      onSave({ title: value });
 
-    if (!formattedValue) return;
-
-    if (!isLoggedIn && onSave) {
-      onSave({ title: formattedValue });
+      return;
     }
 
     if (!params.id) return;
-    await createTodo({ title: formattedValue, listId: params.id as string });
+    await createTodo({ title: value, listId: params.id as string });
   };
 
-  const handlersMap = {
-    list: handleAddList,
+  const handlersMap: HandlersMap = {
+    list: createList,
     todo: handleAddTodo,
+    localTodo: handleAddTodo,
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -67,14 +58,14 @@ export default function AddItemInput({
   const handleSubmit = async () => {
     setInputValue("");
     setIsLoading(true);
-    await handlersMap[type](inputValue);
+    await handlersMap[type](inputValue.trim());
     setIsLoading(false);
     redirect(`${PATHS.todos}/${params.id}`);
   };
 
   return (
-    <div className="flex">
-      <Input color="primary" value={inputValue} onChange={handleChange} />
+    <div className="flex mb-4">
+      <Input color="success" value={inputValue} onChange={handleChange} />
       <Button
         isIconOnly
         className={`ml-1 ${isButtonDisabled && "cursor-not-allowed"}`}

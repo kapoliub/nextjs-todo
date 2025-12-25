@@ -6,8 +6,9 @@ import { revalidatePath } from "next/cache";
 import { PATHS } from "../paths";
 import { createClient } from "../supabase/server";
 
-import { getUserId } from "@/lib/helpers/user-info";
-import { InsertList } from "@/types";
+import { getUser } from "./auth";
+
+import { InsertList, UpdateList } from "@/types";
 
 export interface ShareListData {
   listId: string;
@@ -15,15 +16,20 @@ export interface ShareListData {
   canEdit?: boolean;
 }
 
+interface UpdateListParams extends UpdateList {
+  id: string;
+}
+
 export async function createList(title: InsertList["title"]) {
   const supabase = await createClient();
-  const userId = await getUserId(supabase.auth);
+  const user = await getUser(supabase.auth);
 
-  if (!userId) return { error: "Unauthorized" };
+  if (!user) return { error: "Unauthorized" };
+  if (!title.length) return { error: "Title required" };
 
   const { data, error } = await supabase
     .from("lists")
-    .insert({ title, owner_id: userId })
+    .insert({ title, owner_id: user.id })
     .select()
     .single();
 
@@ -34,16 +40,36 @@ export async function createList(title: InsertList["title"]) {
   return { data };
 }
 
+export async function updateList({ title, id }: UpdateListParams) {
+  const supabase = await createClient();
+  const user = await getUser(supabase.auth);
+
+  if (!user) return { error: "Unauthorized" };
+
+  const { error } = await supabase
+    .from("lists")
+    .update({
+      title,
+    })
+    .eq("id", id)
+    .eq("owner_id", user.id);
+
+  if (error) return { message: error.message };
+  revalidatePath(PATHS.todos);
+
+  return { message: "" };
+}
+
 export async function getUserLists() {
   const supabase = await createClient();
-  const userId = await getUserId(supabase.auth);
+  const user = await getUser(supabase.auth);
 
-  if (!userId) return { error: "Unauthorized" };
+  if (!user) return { error: "Unauthorized" };
 
   const { data, error } = await supabase
     .from("lists")
     .select("*")
-    .eq("owner_id", userId)
+    .eq("owner_id", user.id)
     .order("created_at", { ascending: false });
 
   if (error) return { error: error.message };
@@ -53,15 +79,15 @@ export async function getUserLists() {
 
 export async function deleteList(id: string, isSelected: boolean) {
   const supabase = await createClient();
-  const userId = await getUserId(supabase.auth);
+  const user = await getUser(supabase.auth);
 
-  if (!userId) return { error: "Unauthorized" };
+  if (!user) return { error: "Unauthorized" };
 
   const { error, status } = await supabase
     .from("lists")
     .delete()
     .eq("id", id)
-    .eq("owner_id", userId);
+    .eq("owner_id", user.id);
 
   if (error) {
     return { error: error.message };
