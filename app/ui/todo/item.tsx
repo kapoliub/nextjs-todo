@@ -6,15 +6,13 @@ import { RefObject, useState } from "react";
 import { Checkbox } from "@heroui/checkbox";
 import { useParams } from "next/navigation";
 
-import ButtonWithModal from "../common/button-with-modal";
-import EditableText from "../common/editable-text";
-
+import { EditableText, ButtonWithModal } from "@/app/ui/common";
 import { CheckIcon } from "@/app/ui/icons";
 import { deleteTodo, editTodo } from "@/lib/actions/todos";
 import { StoredTodo } from "@/lib/utils/local-storage";
 import { useClickOutside } from "@/lib/hooks/use-outside-click";
 
-export interface TodoItemProps extends StoredTodo {
+interface TodoItemProps extends StoredTodo {
   onDelete?: (id: string) => void;
   onEdit?: (todo: StoredTodo) => void;
 }

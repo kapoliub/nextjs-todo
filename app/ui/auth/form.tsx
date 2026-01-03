@@ -8,8 +8,7 @@ import z from "zod";
 import { addToast } from "@heroui/toast";
 import { redirect } from "next/navigation";
 
-import PasswordInput from "./password-input";
-
+import { PasswordInput } from "@/app/ui/auth";
 import { type AuthState } from "@/lib/actions/auth";
 import { syncTodosWithDB } from "@/lib/actions/todos";
 import {

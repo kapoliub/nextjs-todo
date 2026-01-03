@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-import TodoItem from "@/app/ui/todo/item";
+import { TodoItem } from "@/app/ui/todo";
 import {
   deleteTodoFromLocalStorage,
   editTodoInLocalStorage,
@@ -10,7 +10,7 @@ import {
   StoredTodo,
 } from "@/lib/utils/local-storage";
 import { CreateTodoParams } from "@/lib/actions/todos";
-import AddItemInput from "@/app/ui/list/input";
+import { AddItemInput } from "@/app/ui/list";
 
 export default function TodoList() {
   const [todos, setTodos] = useState<StoredTodo[]>(

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import TodoList from "@/app/ui/homepage/todo-list";
+import { TodoList } from "@/app/ui/homepage";
 import { getUser } from "@/lib/actions/auth";
 import { PATHS } from "@/lib/paths";
 

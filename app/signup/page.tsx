@@ -1,6 +1,6 @@
-import SignUpForm from "@/app/ui/auth/form";
+import { AuthForm } from "@/app/ui/auth";
 import { registerUser } from "@/lib/actions/auth";
 
 export default function SignupPage() {
-  return <SignUpForm type="signup" onSubmit={registerUser} />;
+  return <AuthForm type="signup" onSubmit={registerUser} />;
 }

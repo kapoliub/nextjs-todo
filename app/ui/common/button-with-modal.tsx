@@ -10,7 +10,7 @@ import {
 } from "@heroui/modal";
 import { ReactNode, useState } from "react";
 
-import { TrashIcon } from "../icons";
+import { TrashIcon } from "@/app/ui/icons";
 
 interface ButtonWithModalProps {
   onSubmit: () => Promise<void>;

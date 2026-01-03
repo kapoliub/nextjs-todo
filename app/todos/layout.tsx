@@ -1,7 +1,6 @@
-import AddItemInput from "../ui/list/input";
-import Sidebar from "../ui/common/sidebar";
-
-import ListItem from "@/app/ui/list/list-item";
+import { ChildrenLayout } from "@/app/ui/common";
+import { AddItemInput, ListItem, SidebarTitle } from "@/app/ui/list";
+import { Sidebar } from "@/app/ui/layout";
 import { getUserLists } from "@/lib/actions/lists";
 import { TodosCount } from "@/types";
 
@@ -14,9 +13,11 @@ export default async function ItemsLayout({
 
   return (
     <div className="flex w-full h-full">
-      <Sidebar>
+      <Sidebar
+        title={<SidebarTitle count={data?.length} text="Lists" />}
+        topContent={<AddItemInput type="list" />}
+      >
         <div className="flex flex-col gap-2">
-          <AddItemInput type="list" />
           {data?.map((item) => (
             <ListItem
               key={item.id}
@@ -27,7 +28,7 @@ export default async function ItemsLayout({
           ))}
         </div>
       </Sidebar>
-      <main className="flex-1 p-4">{children}</main>
+      <ChildrenLayout>{children}</ChildrenLayout>
     </div>
   );
 }

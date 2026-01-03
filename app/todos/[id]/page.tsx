@@ -1,5 +1,5 @@
 import { getListTodos } from "@/lib/actions/todos";
-import TodoItem from "@/app/ui/todo/item";
+import { TodoItem } from "@/app/ui/todo";
 
 // app/items/[id]/page.tsx
 export default async function ItemPage({

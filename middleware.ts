@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { PATHS } from "./lib/paths";
-import { ACCESS_TOKEN_KEY } from "./lib/constants";
+import { PATHS } from "@/lib/paths";
+import { ACCESS_TOKEN_KEY } from "@/lib/constants";
 
 export function middleware(req: NextRequest) {
   const token = req.cookies.get(ACCESS_TOKEN_KEY)?.value; // <- must match cookie name

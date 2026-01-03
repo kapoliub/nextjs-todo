@@ -6,10 +6,9 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import z from "zod";
 import { addToast } from "@heroui/toast";
 
-import PasswordInput from "../common/password-input";
-
 import { PASSWORD_SCHEMA } from "@/lib/utils/input-validations";
 import { updateUser } from "@/lib/actions/auth";
+import { PasswordInput } from "@/app/ui/common";
 
 interface PasswordFormErrors {
   newPassword?: string[];

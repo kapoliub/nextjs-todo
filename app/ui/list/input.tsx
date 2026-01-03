@@ -41,6 +41,7 @@ export default function AddItemInput({
 
     if (!params.id) return;
     await createTodo({ title: value, listId: params.id as string });
+    redirect(`${PATHS.todos}/${params.id}`);
   };
 
   const handlersMap: HandlersMap = {
@@ -60,11 +61,10 @@ export default function AddItemInput({
     setIsLoading(true);
     await handlersMap[type](inputValue.trim());
     setIsLoading(false);
-    redirect(`${PATHS.todos}/${params.id}`);
   };
 
   return (
-    <div className="flex mb-4">
+    <div className="flex">
       <Input color="success" value={inputValue} onChange={handleChange} />
       <Button
         isIconOnly
