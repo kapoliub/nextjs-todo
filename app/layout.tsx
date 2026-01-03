@@ -2,11 +2,10 @@ import "@/styles/globals.css";
 import { Viewport } from "next";
 import clsx from "clsx";
 
-import { Providers } from "./providers";
-
+import { Providers } from "@/app/providers";
 import Navbar from "@/app/ui/navbar/navbar";
 import { fontSans } from "@/config/fonts";
-import OneTapComponent from "@/app/ui/auth/google-one-tap";
+import { OneTapComponent } from "@/app/ui/auth";
 
 // export const metadata: Metadata = {
 //   title: {

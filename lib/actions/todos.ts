@@ -3,11 +3,9 @@ import { redirect } from "next/navigation";
 import { format } from "date-fns";
 import { revalidatePath } from "next/cache";
 
-import { PATHS } from "../paths";
-
-import { createList } from "./lists";
-import { getUser } from "./auth";
-
+import { PATHS } from "@/lib/paths";
+import { createList } from "@/lib/actions/lists";
+import { getUser } from "@/lib/actions/auth";
 import { createClient } from "@/lib/supabase/server";
 import { UpdateTodo } from "@/types";
 import { StoredTodo } from "@/lib/utils/local-storage";

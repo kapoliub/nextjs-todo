@@ -4,10 +4,7 @@ import {
   NavbarItem,
 } from "@heroui/navbar";
 
-import AuthButton from "./auth-button";
-import AvatarDropdown from "./avatar-dropdown";
-import HomepageButton from "./homepage-button";
-
+import { AuthButton, AvatarDropdown, HomepageButton } from "@/app/ui/navbar";
 import ThemeSwitcher from "@/app/ui/theme-switcher";
 import { getUser } from "@/lib/actions/auth";
 

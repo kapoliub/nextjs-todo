@@ -3,11 +3,9 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
-import { PATHS } from "../paths";
-import { createClient } from "../supabase/server";
-
-import { getUser } from "./auth";
-
+import { getUser } from "@/lib/actions/auth";
+import { createClient } from "@/lib/supabase/server";
+import { PATHS } from "@/lib/paths";
 import { InsertList, UpdateList } from "@/types";
 
 export interface ShareListData {

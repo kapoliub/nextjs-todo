@@ -7,6 +7,7 @@ import { generateNonce } from "@/lib/utils/tokens";
 import { checkCurrentSession, signInWithGoogle } from "@/lib/actions/auth";
 
 declare const google: { accounts: accounts };
+
 const OneTapComponent = () => {
   const initializeGoogleOneTap = async () => {
     const [nonce, hashedNonce] = await generateNonce();

@@ -1,4 +1,4 @@
-import AddItemInput from "@/app/ui/list/input";
+import { AddItemInput } from "@/app/ui/list";
 
 export default async function TodosLayout({
   children,

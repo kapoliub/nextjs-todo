@@ -3,7 +3,7 @@ import { redirect, useParams } from "next/navigation";
 import { Button } from "@heroui/button";
 import { RefObject, useState } from "react";
 
-import ButtonWithModal from "@/app/ui/common/button-with-modal";
+import { ButtonWithModal } from "@/app/ui/common";
 import { CheckIcon, EditIcon } from "@/app/ui/icons";
 import { deleteList } from "@/lib/actions/lists";
 import { PATHS } from "@/lib/paths";

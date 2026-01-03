@@ -1,8 +1,7 @@
 /* eslint-disable no-console */
 "use client";
 
-import { LS_TODOS_KEY } from "../constants";
-
+import { LS_TODOS_KEY } from "@/lib/constants";
 import { Todo } from "@/types";
 
 export interface StoredTodo

@@ -4,15 +4,12 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { addToast } from "@heroui/toast";
 
-import EditableText from "../common/editable-text";
-
-import ButtonsContainer from "./button-container";
-import Chips from "./chips";
-
+import { ButtonsContainer, Chips } from "@/app/ui/list";
 import { PATHS } from "@/lib/paths";
 import { updateList } from "@/lib/actions/lists";
 import { useClickOutside } from "@/lib/hooks/use-outside-click";
 import { TodosCount } from "@/types";
+import { EditableText } from "@/app/ui/common";
 
 interface ListItemProps {
   id: string;
