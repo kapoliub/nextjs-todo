@@ -11,6 +11,7 @@ import { CheckIcon } from "@/app/ui/icons";
 import { deleteTodo, editTodo } from "@/lib/actions/todos";
 import { StoredTodo } from "@/lib/utils/local-storage";
 import { useClickOutside } from "@/lib/hooks/use-outside-click";
+import { addErrorToast, addSuccessToast } from "@/lib/utils/toast";
 
 interface TodoItemProps extends StoredTodo {
   onDelete?: (id: string) => void;
@@ -52,9 +53,15 @@ export default function TodoItem({
 
   const handleDelete = async () => {
     setIsLoading(true);
-    await deleteTodo(id, listId as string);
+    const response = await deleteTodo(id, listId as string);
+
     onDelete?.(id);
     setIsLoading(false);
+    if (response?.error) {
+      addErrorToast(response?.error);
+    } else {
+      addSuccessToast("The todo has been removed");
+    }
   };
 
   const handleCancelEdit = () => {

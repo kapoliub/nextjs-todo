@@ -4,11 +4,11 @@ import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
 import { ChangeEvent, FormEvent, useState } from "react";
 import z from "zod";
-import { addToast } from "@heroui/toast";
 
 import { PASSWORD_SCHEMA } from "@/lib/utils/input-validations";
 import { updateUser } from "@/lib/actions/auth";
 import { PasswordInput } from "@/app/ui/common";
+import { addErrorToast, addSuccessToast } from "@/lib/utils/toast";
 
 interface PasswordFormErrors {
   newPassword?: string[];
@@ -73,18 +73,9 @@ export default function PasswordForm() {
     const { message } = await updateUser({ password: data.newPassword });
 
     if (message) {
-      addToast({
-        title: "Error",
-        color: "danger",
-        description: message,
-      });
+      addErrorToast(message);
     } else {
-      addToast({
-        title: "Success",
-        color: "success",
-        description: "Password changed successfully",
-      });
-
+      addSuccessToast("Password has been changed");
       setIsSubmitted(false);
       form.reset();
     }
