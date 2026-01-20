@@ -2,7 +2,6 @@
 import { Card, CardBody } from "@heroui/card";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { addToast } from "@heroui/toast";
 
 import { ButtonsContainer, Chips } from "@/app/ui/list";
 import { PATHS } from "@/lib/paths";
@@ -10,6 +9,7 @@ import { updateList } from "@/lib/actions/lists";
 import { useClickOutside } from "@/lib/hooks/use-outside-click";
 import { TodosCount } from "@/types";
 import { EditableText } from "@/app/ui/common";
+import { addErrorToast, addSuccessToast } from "@/lib/utils/toast";
 
 interface ListItemProps {
   id: string;
@@ -33,18 +33,17 @@ export default function ListItem({ id, title, todosCount }: ListItemProps) {
   const onEditSubmit = async () => {
     const formattedValue = itemTitle.trim().replace(/[^\S\n]+/g, " ");
 
+    setItemTitle(formattedValue);
+
     if (formattedValue && formattedValue !== title) {
       const { message } = await updateList({ title: formattedValue, id });
 
       if (message) {
-        addToast({
-          title: "Error",
-          color: "danger",
-          description: message,
-        });
+        addErrorToast(message);
 
         return;
       }
+      addSuccessToast("The title has been changed");
     }
     setIsEditable(false);
   };
@@ -58,12 +57,12 @@ export default function ListItem({ id, title, todosCount }: ListItemProps) {
 
   return (
     <Card
-      className={`${!isSelected && "opacity-80 hover:opacity-100"} cursor-pointer`}
+      className={`${!isSelected && "opacity-75 hover:opacity-100"} cursor-pointer`}
       isBlurred={!isSelected}
     >
       <CardBody className="p-1 pl-0 flex flex-row justify-between align-center">
         <div
-          className="flex flex-1 items-center"
+          className="flex flex-1 items-center overflow-hidden"
           role="presentation"
           onClick={onListClick}
         >
@@ -71,6 +70,7 @@ export default function ListItem({ id, title, todosCount }: ListItemProps) {
           <EditableText
             excludeRef={editableRef}
             isActive={isEditable}
+            maxLength={84}
             value={itemTitle}
             onInputChange={setItemTitle}
           >
@@ -78,6 +78,7 @@ export default function ListItem({ id, title, todosCount }: ListItemProps) {
           </EditableText>
         </div>
         <ButtonsContainer
+          disableSubmit={!itemTitle.trim().length}
           excludeRef={editableRef}
           isEditable={isEditable}
           itemId={id}

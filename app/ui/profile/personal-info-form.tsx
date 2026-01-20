@@ -4,7 +4,6 @@ import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
 import { ChangeEvent, FormEvent, useState } from "react";
 import z from "zod";
-import { addToast } from "@heroui/toast";
 import { Input } from "@heroui/input";
 
 import {
@@ -12,6 +11,11 @@ import {
   OPTIONAL_PHONE_SCHEMA,
 } from "@/lib/utils/input-validations";
 import { updateUser } from "@/lib/actions/auth";
+import {
+  addErrorToast,
+  addInfoToast,
+  addSuccessToast,
+} from "@/lib/utils/toast";
 
 interface PersonalInfoFormProps {
   email?: string;
@@ -77,12 +81,7 @@ export default function PersonalInfoForm({
     }
 
     if (data.email === email && data.phone === phone) {
-      addToast({
-        title: "Info",
-        color: "default",
-        description: "No changes detected",
-      });
-
+      addInfoToast("No changes detected");
       setIsSubmitted(false);
 
       return;
@@ -97,18 +96,9 @@ export default function PersonalInfoForm({
     });
 
     if (message) {
-      addToast({
-        title: "Error",
-        color: "danger",
-        description: message,
-      });
+      addErrorToast(message);
     } else {
-      addToast({
-        title: "Success",
-        color: "success",
-        description: "Password changed successfully",
-      });
-
+      addSuccessToast("Password has been changed");
       setIsSubmitted(false);
       form.reset();
     }

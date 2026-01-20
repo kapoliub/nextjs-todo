@@ -5,7 +5,6 @@ import { Input } from "@heroui/input";
 import { Card, CardBody } from "@heroui/card";
 import { FormEvent, useState, ChangeEvent } from "react";
 import z from "zod";
-import { addToast } from "@heroui/toast";
 import { redirect } from "next/navigation";
 
 import { PasswordInput } from "@/app/ui/auth";
@@ -17,6 +16,7 @@ import {
 } from "@/lib/utils/local-storage";
 import { PATHS } from "@/lib/paths";
 import { EMAIL_SCHEMA, PASSWORD_SCHEMA } from "@/lib/utils/input-validations";
+import { addErrorToast } from "@/lib/utils/toast";
 
 interface AuthFormErrors {
   email?: string[];
@@ -100,11 +100,7 @@ export default function AuthForm({ type, onSubmit }: AuthFormProps) {
 
     if (message) {
       setIsLoading(false);
-      addToast({
-        title: "Error",
-        color: "danger",
-        description: message,
-      });
+      addErrorToast(message);
     } else {
       const todos = getStoredTodosFromLocalStorage();
 

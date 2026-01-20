@@ -7,11 +7,13 @@ import { ButtonWithModal } from "@/app/ui/common";
 import { CheckIcon, EditIcon } from "@/app/ui/icons";
 import { deleteList } from "@/lib/actions/lists";
 import { PATHS } from "@/lib/paths";
+import { addSuccessToast } from "@/lib/utils/toast";
 
 interface ButtonsContainerProps {
   itemId: string;
   isEditable: boolean;
   excludeRef: RefObject<any>;
+  disableSubmit: boolean;
   onEditButtonClick: () => void;
   onEditSubmit: () => Promise<void>;
 }
@@ -20,6 +22,7 @@ export default function ButtonsContainer({
   itemId,
   isEditable,
   excludeRef,
+  disableSubmit,
   onEditSubmit,
   onEditButtonClick,
 }: ButtonsContainerProps) {
@@ -34,6 +37,7 @@ export default function ButtonsContainer({
       redirect(PATHS.todos);
     }
     setIsLoading(false);
+    addSuccessToast("The list has been deleted");
   };
 
   const handleEditSubmit = async () => {
@@ -47,7 +51,9 @@ export default function ButtonsContainer({
       <Button
         ref={excludeRef}
         isIconOnly
+        className={`min-h-8 flex-1 ${disableSubmit && "cursor-not-allowed"}`}
         color="primary"
+        disabled={disableSubmit}
         id="edit-list-button"
         isLoading={isLoading}
         radius="md"
@@ -58,6 +64,7 @@ export default function ButtonsContainer({
       </Button>
       <ButtonWithModal
         buttonProps={{
+          className: "min-h-8 flex-1",
           isLoading: isLoading,
           color: "danger",
           radius: "md",

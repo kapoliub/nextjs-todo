@@ -38,7 +38,7 @@ export default function Chips({ todosCount }: ChipsProps) {
             placement="right"
           >
             <Chip
-              className="w-32px text-center max-w-none  flex-1"
+              className="w-32px text-center max-w-none flex-1"
               color={color}
               radius="md"
               variant="flat"

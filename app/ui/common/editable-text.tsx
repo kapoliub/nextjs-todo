@@ -10,6 +10,7 @@ interface EditableTextProps {
   excludeRef: RefObject<any>;
   value: string;
   onInputChange: (value: string) => void;
+  maxLength?: number;
 }
 
 export default function EditableText({
@@ -17,6 +18,7 @@ export default function EditableText({
   value,
   isActive,
   excludeRef,
+  maxLength,
   onInputChange,
 }: EditableTextProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -48,6 +50,8 @@ export default function EditableText({
         input: "text-base",
         innerWrapper: "flex items-center",
       }}
+      isInvalid={!value.trim().length}
+      maxLength={maxLength}
       minRows={1}
       value={value}
       variant="underlined"
@@ -56,7 +60,7 @@ export default function EditableText({
   ) : (
     <div
       ref={excludeRef}
-      className="flex-1 m-auto mx-2 my-2 border-b-2 border-transparent"
+      className="flex-1 m-auto mx-2 my-2 border-b-2 border-transparent overflow-auto"
     >
       {children}
     </div>
