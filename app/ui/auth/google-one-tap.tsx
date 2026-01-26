@@ -4,7 +4,7 @@ import type { accounts, CredentialResponse } from "google-one-tap";
 import Script from "next/script";
 
 import { generateNonce } from "@/lib/utils/tokens";
-import { checkCurrentSession, signInWithGoogle } from "@/lib/actions/auth";
+import { getUser, signInWithGoogle } from "@/lib/actions/auth";
 
 declare const google: { accounts: accounts };
 
@@ -12,7 +12,7 @@ const OneTapComponent = () => {
   const initializeGoogleOneTap = async () => {
     const [nonce, hashedNonce] = await generateNonce();
 
-    const session = await checkCurrentSession();
+    const session = await getUser();
 
     if (session) return;
 

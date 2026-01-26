@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+
 import { getListTodos } from "@/lib/actions/todos";
 import { TodoItem } from "@/app/ui/todo";
 
@@ -5,14 +7,14 @@ import { TodoItem } from "@/app/ui/todo";
 export default async function ItemPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ listId: string }>;
 }) {
-  const { id } = await params;
-  const { data: todos = [] } = await getListTodos(id);
+  const { listId } = await params;
+  const { data: todos } = await getListTodos(listId);
 
-  // if (!todos) {
-  //   redirect(PATHS.todos);
-  // }
+  if (!todos) {
+    return notFound();
+  }
 
   return (
     <div>

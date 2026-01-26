@@ -24,7 +24,7 @@ export default function Welcome() {
   }, []);
 
   if (typeof window !== "undefined" && !isHashValid) {
-    notFound();
+    return notFound();
   }
 
   return (

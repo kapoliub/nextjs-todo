@@ -17,13 +17,13 @@ export default function HomepageButton({ hidden }: HomepageButtonProps) {
 
   const pageName = PAGE_NAMES[rootPath] ?? "";
 
-  const showButton = !hidden && !path.includes(PATHS.todos);
+  const showButton = !hidden && !path.includes(PATHS.todos());
 
   return (
     <NavbarItem className="flex items-center gap-4">
       <h1 className="text-2xl/7 font-bold">{pageName}</h1>
       {showButton && (
-        <Button as={Link} color="primary" href={PATHS.todos}>
+        <Button as={Link} color="primary" href={PATHS.todos()}>
           Homepage
         </Button>
       )}

@@ -4,7 +4,7 @@ import {
   NavbarItem,
 } from "@heroui/navbar";
 
-import { AuthButton, AvatarDropdown, HomepageButton } from "@/app/ui/navbar";
+import { AvatarDropdown, HomepageButton, AuthButtons } from "@/app/ui/navbar";
 import ThemeSwitcher from "@/app/ui/theme-switcher";
 import { getUser } from "@/lib/actions/auth";
 
@@ -30,7 +30,7 @@ export default async function Navbar() {
                 name={user.user_metadata.full_name ?? user.email}
               />
             ) : (
-              <AuthButton />
+              <AuthButtons />
             )}
           </NavbarItem>
         </div>

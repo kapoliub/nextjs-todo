@@ -18,7 +18,7 @@ interface ListItemProps {
 }
 
 export default function ListItem({ id, title, todosCount }: ListItemProps) {
-  const { id: listId } = useParams();
+  const { listId } = useParams();
   const { push } = useRouter();
   const [itemTitle, setItemTitle] = useState(title);
   const [isEditable, setIsEditable] = useState(false);
@@ -27,7 +27,7 @@ export default function ListItem({ id, title, todosCount }: ListItemProps) {
 
   const onListClick = () => {
     if (isEditable || isSelected) return;
-    push(`${PATHS.todos}/${id}`);
+    push(PATHS.todos(id));
   };
 
   const onEditSubmit = async () => {

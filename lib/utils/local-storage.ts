@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 "use client";
 
 import { LS_TODOS_KEY } from "@/lib/constants";
@@ -49,9 +48,7 @@ export const deleteTodoFromLocalStorage = (id: string) => {
   localStorage.setItem(LS_TODOS_KEY, JSON.stringify(updatedTodos));
 };
 
-export const clearTodosFromLocalStorage = () => {
-  console.log("Clearing todos from localStorage");
+export const clearTodosFromLocalStorage = async () => {
   if (typeof window === "undefined") return;
-  console.log("Clearing todos from localStorage - inside window check");
   localStorage.removeItem(LS_TODOS_KEY);
 };

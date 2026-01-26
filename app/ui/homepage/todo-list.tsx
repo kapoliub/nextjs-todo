@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 
+import AddLocalTodoInput from "./add-local-todo-input";
+
 import { TodoItem } from "@/app/ui/todo";
 import {
   deleteTodoFromLocalStorage,
@@ -9,18 +11,16 @@ import {
   saveTodoToLocalStorage,
   StoredTodo,
 } from "@/lib/utils/local-storage";
-import { CreateTodoParams } from "@/lib/actions/todos";
-import { AddItemInput } from "@/app/ui/list";
 
 export default function TodoList() {
   const [todos, setTodos] = useState<StoredTodo[]>(
     getStoredTodosFromLocalStorage(),
   );
 
-  const handleSaveTodos = (todo: Omit<CreateTodoParams, "listId">) => {
+  const handleSaveTodos = (title: string) => {
     const newTodo: StoredTodo = {
-      ...todo,
-      description: todo.description || null,
+      title,
+      description: null,
       id: crypto.randomUUID(),
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -49,17 +49,23 @@ export default function TodoList() {
   };
 
   return (
-    <div className="w-dvw px-10">
-      <h1 className="text-center mb-2 font-bold">Todo List</h1>
-      <AddItemInput type="localTodo" onSave={handleSaveTodos} />
-      {todos.map((todo) => (
-        <TodoItem
-          key={todo.id}
-          {...todo}
-          onDelete={handleDeleteTodo}
-          onEdit={handleEditTodo}
-        />
-      ))}
+    <div className="flex flex-col h-full w-full">
+      {/* Sticky input */}
+      <div className="sticky top-0 z-10 px-6 py-3 bg-primary-100">
+        <AddLocalTodoInput onSave={handleSaveTodos} />
+      </div>
+
+      {/* Scrollable todos */}
+      <div className="flex-1 overflow-y-auto space-y-2 no-scrollbar px-6 pb-1">
+        {todos.map((todo) => (
+          <TodoItem
+            key={todo.id}
+            {...todo}
+            onDelete={handleDeleteTodo}
+            onEdit={handleEditTodo}
+          />
+        ))}
+      </div>
     </div>
   );
 }

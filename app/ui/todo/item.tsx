@@ -30,7 +30,7 @@ export default function TodoItem({
   const [isChecked, setIsChecked] = useState(!!todoProps.is_completed);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { id: listId } = useParams();
+  const { listId } = useParams();
 
   const handleEdit = () => {
     if (isChecked || isLoading) return;
@@ -47,21 +47,25 @@ export default function TodoItem({
       setIsLoading(true);
       await editTodo({ id, title: formattedValue }, listId as string);
       onEdit?.({ ...todoProps, id, title: formattedValue });
-      setIsLoading(false);
     }
+    setIsLoading(false);
   };
 
   const handleDelete = async () => {
     setIsLoading(true);
-    const response = await deleteTodo(id, listId as string);
-
-    onDelete?.(id);
-    setIsLoading(false);
-    if (response?.error) {
-      addErrorToast(response?.error);
+    //TODO: fix deleting for non authenticated users
+    if (onDelete) {
+      onDelete(id);
     } else {
-      addSuccessToast("The todo has been removed");
+      const response = await deleteTodo(id, listId as string);
+
+      if (response?.error) {
+        addErrorToast(response?.error);
+      } else {
+        addSuccessToast("The todo has been removed");
+      }
     }
+    setIsLoading(false);
   };
 
   const handleCancelEdit = () => {
@@ -80,7 +84,7 @@ export default function TodoItem({
   const editableRef = useClickOutside(handleCancelEdit);
 
   return (
-    <Card className="my-2">
+    <Card className="my-2 mx-4">
       <CardBody
         className={`w-full flex flex-row p-2 ${isChecked && "opacity-50 bg-green-200"}`}
       >

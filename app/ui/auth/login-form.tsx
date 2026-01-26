@@ -1,46 +1,54 @@
 "use client";
 
+import { Input } from "@heroui/input";
 import { Card, CardBody } from "@heroui/card";
 import { useActionState, useEffect } from "react";
-import { Input } from "@heroui/input";
+import { useRouter } from "next/navigation";
 
-import { updatePersonalInfo } from "@/lib/actions/auth";
-import { addSuccessToast } from "@/lib/utils/toast";
+import PasswordInput from "./password-input";
+
+import { loginUser } from "@/lib/actions/auth";
+import {
+  clearTodosFromLocalStorage,
+  getStoredTodosFromLocalStorage,
+} from "@/lib/utils/local-storage";
+import { PATHS } from "@/lib/paths";
 import { Form } from "@/app/ui/common";
 
-interface PersonalInfoFormProps {
-  email?: string;
-  phone?: string;
-}
-
-export default function PersonalInfoForm({
-  email = "",
-  phone = "",
-}: PersonalInfoFormProps) {
-  const [state, action, isPending] = useActionState(updatePersonalInfo, {
-    success: false,
-    errors: {},
-  });
+export default function LoginForm() {
+  const { replace } = useRouter();
+  const [state, action, isPending] = useActionState(
+    loginUser.bind(null, getStoredTodosFromLocalStorage()),
+    {
+      success: false,
+      errors: {},
+    },
+  );
 
   useEffect(() => {
     if (state.success) {
-      addSuccessToast("Personal info updated successfully");
+      clearTodosFromLocalStorage();
+      replace(PATHS.todos());
     }
   }, [state]);
 
+  if (state.success) {
+    return "Loading ...";
+  }
+
   return (
-    <Card className="min-w-[300px]">
+    <Card className="w-full">
       <CardBody>
         <Form
+          skipFormReset
           action={action}
           className="flex flex-col gap-4 p-1"
           formError={state.errors._form}
           loading={isPending}
-          submitButtonLabel="Change Personal Info"
+          submitButtonLabel="Login"
         >
           <Input
             autoComplete="email"
-            defaultValue={email}
             disabled={isPending}
             errorMessage={() => (
               <ul>
@@ -55,23 +63,20 @@ export default function PersonalInfoForm({
             name="email"
             type="email"
           />
-
-          <Input
-            disabled
-            autoComplete="tel"
-            defaultValue={phone}
+          <PasswordInput
+            autoComplete="password"
+            disabled={isPending}
             errorMessage={() => (
               <ul>
-                {state.errors.phone?.map((error) => (
+                {state.errors.password?.map((error) => (
                   <li key={error}>{error}</li>
                 ))}
               </ul>
             )}
-            isInvalid={!!state.errors.phone}
-            label="Phone"
+            isInvalid={!!state.errors.password}
+            label="Password"
             labelPlacement="outside-top"
-            name="phone"
-            type="tel"
+            name="password"
           />
         </Form>
       </CardBody>

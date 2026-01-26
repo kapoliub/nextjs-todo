@@ -3,12 +3,14 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
+import { addList, createList } from "./create-list";
+
 import { getUser } from "@/lib/actions/auth";
 import { createClient } from "@/lib/supabase/server";
 import { PATHS } from "@/lib/paths";
-import { InsertList, UpdateList } from "@/types";
+import { UpdateList } from "@/types";
 
-export interface ShareListData {
+interface ShareListData {
   listId: string;
   email: string;
   canEdit?: boolean;
@@ -18,27 +20,7 @@ interface UpdateListParams extends UpdateList {
   id: string;
 }
 
-export async function createList(title: InsertList["title"]) {
-  const supabase = await createClient();
-  const user = await getUser(supabase.auth);
-
-  if (!user) return { error: "Unauthorized" };
-  if (!title.length) return { error: "Title required" };
-
-  const { data, error } = await supabase
-    .from("lists")
-    .insert({ title, owner_id: user.id })
-    .select()
-    .single();
-
-  if (error) return { error: error.message };
-
-  revalidatePath(PATHS.todos);
-
-  return { data };
-}
-
-export async function updateList({ title, id }: UpdateListParams) {
+async function updateList({ title, id }: UpdateListParams) {
   const supabase = await createClient();
   const user = await getUser(supabase.auth);
 
@@ -53,12 +35,12 @@ export async function updateList({ title, id }: UpdateListParams) {
     .eq("owner_id", user.id);
 
   if (error) return { message: error.message };
-  revalidatePath(PATHS.todos);
+  revalidatePath(PATHS.todos());
 
   return { message: "" };
 }
 
-export async function getUserLists() {
+async function getUserLists() {
   const supabase = await createClient();
   const user = await getUser(supabase.auth);
 
@@ -75,7 +57,7 @@ export async function getUserLists() {
   return { data };
 }
 
-export async function deleteList(id: string, isSelected: boolean) {
+async function deleteList(id: string, isSelected: boolean) {
   const supabase = await createClient();
   const user = await getUser(supabase.auth);
 
@@ -92,13 +74,14 @@ export async function deleteList(id: string, isSelected: boolean) {
   }
 
   if (status === 204 && isSelected) {
-    redirect(PATHS.todos);
+    redirect(PATHS.todos());
   }
 
-  revalidatePath(PATHS.todos);
-
-  // return response;
+  revalidatePath(PATHS.todos());
 }
+
+export { updateList, deleteList, getUserLists, addList, createList };
+export type { ShareListData };
 
 // // ------------------
 // // 3️⃣ Get all lists shared *with* the current user

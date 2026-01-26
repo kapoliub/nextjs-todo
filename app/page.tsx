@@ -8,12 +8,12 @@ export default async function Home() {
   const user = await getUser();
 
   if (user) {
-    redirect(PATHS.todos);
+    redirect(PATHS.todos());
   }
 
   return (
-    <section>
+    <div className="flex flex-col h-full items-center w-full">
       <TodoList />
-    </section>
+    </div>
   );
 }
