@@ -10,7 +10,6 @@ export default function PasswordInput(props: InputProps) {
 
   return (
     <Input
-      className="max-w-xs"
       endContent={
         <button
           aria-label="toggle password visibility"

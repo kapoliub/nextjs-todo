@@ -1,137 +1,65 @@
 "use client";
 
-import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
-import { ChangeEvent, FormEvent, useState } from "react";
-import z from "zod";
+import { useActionState, useEffect } from "react";
 
-import { PASSWORD_SCHEMA } from "@/lib/utils/input-validations";
-import { updateUser } from "@/lib/actions/auth";
-import { PasswordInput } from "@/app/ui/common";
-import { addErrorToast, addSuccessToast } from "@/lib/utils/toast";
-
-interface PasswordFormErrors {
-  newPassword?: string[];
-  confirmNewPassword?: string[];
-}
-
-type InputsList = {
-  label: string;
-  name: keyof PasswordFormErrors;
-}[];
-
-const inputs: InputsList = [
-  {
-    label: "New Password",
-    name: "newPassword",
-  },
-  {
-    label: "Confirm New Password",
-    name: "confirmNewPassword",
-  },
-];
-
-const getFormValues = (formData: FormData) => ({
-  newPassword: formData.get("newPassword")?.toString() ?? "",
-  confirmNewPassword: formData.get("confirmNewPassword")?.toString() ?? "",
-});
+import { updatePassword } from "@/lib/actions/auth";
+import { Form, PasswordInput } from "@/app/ui/common";
+import { addSuccessToast } from "@/lib/utils/toast";
 
 export default function PasswordForm() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<PasswordFormErrors | null>(null);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [state, action, isPending] = useActionState(updatePassword, {
+    success: false,
+    errors: {},
+  });
 
-  const formSchema = z
-    .object({
-      newPassword: PASSWORD_SCHEMA,
-      confirmNewPassword: z.string(),
-    })
-    .refine((data) => data.newPassword === data.confirmNewPassword, {
-      message: "Passwords don't match",
-      path: ["confirmNewPassword"],
-    });
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setIsSubmitted(true);
-    const form = e.currentTarget as HTMLFormElement;
-    const formData = new FormData(form);
-
-    const { success, data, error } = formSchema.safeParse(
-      getFormValues(formData),
-    );
-
-    if (!success) {
-      setErrors(error.flatten().fieldErrors);
-
-      return;
+  useEffect(() => {
+    if (state.success) {
+      addSuccessToast("Password updated successfully");
     }
-
-    setErrors(null);
-    setIsLoading(true);
-
-    const { message } = await updateUser({ password: data.newPassword });
-
-    if (message) {
-      addErrorToast(message);
-    } else {
-      addSuccessToast("Password has been changed");
-      setIsSubmitted(false);
-      form.reset();
-    }
-
-    setIsLoading(false);
-  };
-
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const form = e.target.form;
-
-    if (!form || !isSubmitted) return;
-
-    const formData = new FormData(form);
-
-    const { success, error } = formSchema.safeParse(getFormValues(formData));
-
-    if (!success) {
-      setErrors(error.flatten().fieldErrors as PasswordFormErrors);
-
-      return;
-    }
-
-    setErrors(null);
-  };
+  }, [state]);
 
   return (
     <Card className="min-w-[300px]">
       <CardBody>
-        <form
-          autoComplete="off"
+        <Form
+          action={action}
           className="flex flex-col gap-4 p-1"
-          onSubmit={handleSubmit}
+          formError={state.errors._form}
+          loading={isPending}
+          submitButtonLabel="Change Password"
         >
-          {inputs.map(({ label, name }) => (
-            <PasswordInput
-              key={label}
-              required
-              autoComplete={name}
-              disabled={isLoading}
-              errorMessage={() => (
-                <ul>
-                  {errors?.[name]?.map((error) => <li key={error}>{error}</li>)}
-                </ul>
-              )}
-              isInvalid={!!errors?.[name]?.[0]}
-              label={label}
-              labelPlacement="outside-top"
-              name={name}
-              onChange={handleInputChange}
-            />
-          ))}
-
-          <Button disabled={isLoading} type="submit">
-            Change Password
-          </Button>
-        </form>
+          <PasswordInput
+            autoComplete="off"
+            disabled={isPending}
+            errorMessage={() => (
+              <ul>
+                {state.errors.newPassword?.map((error) => (
+                  <li key={error}>{error}</li>
+                ))}
+              </ul>
+            )}
+            isInvalid={!!state.errors.newPassword}
+            label="New Password"
+            labelPlacement="outside-top"
+            name="newPassword"
+          />
+          <PasswordInput
+            autoComplete="off"
+            disabled={isPending}
+            errorMessage={() => (
+              <ul>
+                {state.errors.confirmNewPassword?.map((error) => (
+                  <li key={error}>{error}</li>
+                ))}
+              </ul>
+            )}
+            isInvalid={!!state.errors.confirmNewPassword}
+            label="Confirm New Password"
+            labelPlacement="outside-top"
+            name="confirmNewPassword"
+          />
+        </Form>
       </CardBody>
     </Card>
   );

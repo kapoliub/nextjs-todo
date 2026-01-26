@@ -1,54 +1,21 @@
 "use server";
-import { redirect } from "next/navigation";
+
 import { format } from "date-fns";
 import { revalidatePath } from "next/cache";
 
 import { PATHS } from "@/lib/paths";
-import { createList } from "@/lib/actions/lists";
+import { addList } from "@/lib/actions/lists";
 import { getUser } from "@/lib/actions/auth";
 import { createClient } from "@/lib/supabase/server";
 import { UpdateTodo } from "@/types";
 import { StoredTodo } from "@/lib/utils/local-storage";
-
-export interface CreateTodoParams {
-  listId: string;
-  title: string;
-  description?: string;
-}
+import createTodo from "@/lib/actions/todos/create";
 
 interface EditTodoParams extends UpdateTodo {
   id: string;
 }
 
-export async function createTodo({
-  title,
-  listId,
-  description,
-}: CreateTodoParams) {
-  const supabase = await createClient();
-  const user = await getUser(supabase.auth);
-
-  if (!user) return { error: "Unauthorized" };
-
-  const { data, error } = await supabase
-    .from("todos")
-    .insert({
-      title,
-      list_id: listId,
-      description,
-      owner_id: user.id,
-    })
-    .select()
-    .single();
-
-  if (error) return { error: error.message };
-
-  revalidatePath(`${PATHS.todos}/${listId}`);
-
-  return { data };
-}
-
-export async function syncTodosWithDB(todos: StoredTodo[]) {
+async function syncTodosWithDB(todos: StoredTodo[]) {
   if (!todos.length) return;
 
   const supabase = await createClient();
@@ -56,7 +23,7 @@ export async function syncTodosWithDB(todos: StoredTodo[]) {
 
   if (!user) return { error: "Unauthorized" };
 
-  const { data } = await createList(
+  const { data } = await addList(
     `Local list: ${format(new Date(), "HH:mm dd/MM/yyyy")}`,
   );
 
@@ -71,23 +38,13 @@ export async function syncTodosWithDB(todos: StoredTodo[]) {
   const { error } = await supabase.from("todos").insert(todosToSync).select();
 
   if (error) return { error: error.message };
-
-  redirect(PATHS.todos);
 }
 
-export async function getListTodos(id: string) {
+async function getListTodos(id: string) {
   const supabase = await createClient();
   const user = await getUser(supabase.auth);
 
   if (!user) return { error: "Unauthorized" };
-  const { data: list } = await supabase
-    .from("lists")
-    .select("*")
-    .eq("id", id)
-    .eq("owner_id", user.id)
-    .single();
-
-  if (!list) redirect(PATHS.todos);
 
   const { data, error } = await supabase
     .from("todos")
@@ -101,7 +58,7 @@ export async function getListTodos(id: string) {
   return { data };
 }
 
-export async function deleteTodo(id: string, listId: string) {
+async function deleteTodo(id: string, listId: string) {
   const supabase = await createClient();
   const user = await getUser(supabase.auth);
 
@@ -117,10 +74,10 @@ export async function deleteTodo(id: string, listId: string) {
     return { error: error.message };
   }
 
-  revalidatePath(`${PATHS.todos}/${listId}`);
+  revalidatePath(PATHS.todos(listId));
 }
 
-export async function editTodo(
+async function editTodo(
   { id, title, description, is_completed }: EditTodoParams,
   listId: string,
 ) {
@@ -142,5 +99,7 @@ export async function editTodo(
 
   if (error) return { error: error.message };
 
-  revalidatePath(`${PATHS.todos}/${listId}`);
+  revalidatePath(PATHS.todos(listId));
 }
+
+export { editTodo, deleteTodo, syncTodosWithDB, getListTodos, createTodo };

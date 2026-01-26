@@ -1,5 +1,6 @@
-import AuthForm from "./form";
+import SignupForm from "./signup-form";
+import LoginForm from "./login-form";
 import OneTapComponent from "./google-one-tap";
 import PasswordInput from "./password-input";
 
-export { AuthForm, OneTapComponent, PasswordInput };
+export { SignupForm, LoginForm, OneTapComponent, PasswordInput };

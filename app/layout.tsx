@@ -35,13 +35,13 @@ export default function RootLayout({
       <head />
       <body
         className={clsx(
-          "h-screen text-foreground bg-background font-sans antialiased overflow-hidden",
+          "h-screen max-h-screen text-foreground bg-background font-sans antialiased overflow-hidden",
           fontSans.variable,
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
           <Navbar />
-          <div className="w-full h-max flex items-center justify-center">
+          <div className="w-full h-full max-h-[calc(100%-64px)] flex items-center justify-center overflow-hidden">
             {children}
           </div>
           <OneTapComponent />

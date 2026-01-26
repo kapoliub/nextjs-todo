@@ -1,5 +1,5 @@
 import { ChildrenLayout } from "@/app/ui/common";
-import { AddItemInput, ListItem, SidebarTitle } from "@/app/ui/list";
+import { ListItem, SidebarTitle, AddListInput } from "@/app/ui/list";
 import { Sidebar } from "@/app/ui/layout";
 import { getUserLists } from "@/lib/actions/lists";
 import { TodosCount } from "@/types";
@@ -15,7 +15,7 @@ export default async function ItemsLayout({
     <div className="flex w-full h-full">
       <Sidebar
         title={<SidebarTitle count={data?.length} text="Lists" />}
-        topContent={<AddItemInput type="list" />}
+        topContent={<AddListInput />}
       >
         <div className="flex flex-col gap-2">
           {data?.map((item) => (
@@ -28,7 +28,7 @@ export default async function ItemsLayout({
           ))}
         </div>
       </Sidebar>
-      <ChildrenLayout>{children}</ChildrenLayout>
+      <ChildrenLayout padding={0}>{children}</ChildrenLayout>
     </div>
   );
 }

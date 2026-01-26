@@ -6,22 +6,23 @@ import { usePathname } from "next/navigation";
 
 import { PATHS } from "@/lib/paths";
 
-export default function AuthButton() {
+export default function AuthButtons() {
   const pathname = usePathname();
   const isSignupPage = pathname === PATHS.signup;
-  const isWelcomePage = pathname === PATHS.welcome;
-  const isRootPage = pathname === "/";
-
-  const showLoginButton = isSignupPage || isWelcomePage || isRootPage;
+  const isLoginPage = pathname === PATHS.login;
 
   return (
-    <Button
-      as={Link}
-      color="primary"
-      href={showLoginButton ? PATHS.login : PATHS.signup}
-      variant="flat"
-    >
-      {showLoginButton ? "Login" : "Sign Up"}
-    </Button>
+    <div className="flex gap-2">
+      {!isLoginPage && (
+        <Button as={Link} color="primary" href={PATHS.login} variant="flat">
+          Login
+        </Button>
+      )}
+      {!isSignupPage && (
+        <Button as={Link} color="primary" href={PATHS.signup} variant="flat">
+          Sign Up
+        </Button>
+      )}
+    </div>
   );
 }

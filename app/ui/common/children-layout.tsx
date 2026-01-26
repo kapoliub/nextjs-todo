@@ -9,5 +9,5 @@ export default async function ChildrenLayout({
   children,
   padding = 4,
 }: ChildrenLayoutProps) {
-  return <main className={`flex-1 p-${padding}`}>{children}</main>;
+  return <main className={`h-full flex-1 p-${padding}`}>{children}</main>;
 }
