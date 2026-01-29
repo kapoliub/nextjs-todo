@@ -13,7 +13,7 @@ import {
   getStoredTodosFromLocalStorage,
 } from "@/lib/utils/local-storage";
 import { PATHS } from "@/lib/paths";
-import { Form } from "@/app/ui/common";
+import { Form, LoadingSpinner } from "@/app/ui/common";
 
 export default function LoginForm() {
   const { replace } = useRouter();
@@ -33,7 +33,7 @@ export default function LoginForm() {
   }, [state]);
 
   if (state.success) {
-    return "Loading ...";
+    return <LoadingSpinner />;
   }
 
   return (
