@@ -1,9 +1,8 @@
 import { notFound } from "next/navigation";
 
 import { getListTodos } from "@/lib/actions/todos";
-import { TodoItem } from "@/app/ui/todo";
+import { EmptyTodoList, TodoItem } from "@/app/ui/todo";
 
-// app/items/[id]/page.tsx
 export default async function ItemPage({
   params,
 }: {
@@ -18,9 +17,7 @@ export default async function ItemPage({
 
   return (
     <div>
-      {todos.length === 0 && (
-        <p className="mt-4">No todos in this list yet. Add your first todo!</p>
-      )}
+      {todos.length === 0 && <EmptyTodoList />}
       {todos.map((todo) => (
         <TodoItem key={todo.id} {...todo} />
       ))}

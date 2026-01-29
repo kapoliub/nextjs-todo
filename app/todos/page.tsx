@@ -1,4 +1,9 @@
-// app/items/page.tsx
+import { TodoListPlaceholder } from "@/app/ui/list";
+
 export default function Page() {
-  return <p>Please select an item from the list.</p>;
+  return (
+    <div>
+      <TodoListPlaceholder />
+    </div>
+  );
 }
