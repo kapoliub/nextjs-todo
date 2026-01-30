@@ -6,6 +6,6 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-export default async function Layout({ children }: LayoutProps) {
+export default async function DashboardLayout({ children }: LayoutProps) {
   return <Suspense fallback={<LoadingSpinner />}>{children}</Suspense>;
 }

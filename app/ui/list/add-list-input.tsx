@@ -31,6 +31,7 @@ export default function AddListInput() {
         disabled={isPending}
         isInvalid={!!state.errors.title}
         name="title"
+        placeholder="Give your list a name..."
         type="text"
       />
     </Form>

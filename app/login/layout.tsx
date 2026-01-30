@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 
 import { OneTapComponent } from "@/app/ui/auth";
+import { LoadingSpinner } from "@/app/ui/common";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -8,8 +9,8 @@ interface LayoutProps {
 
 export default async function SignupLayout({ children }: LayoutProps) {
   return (
-    <Suspense fallback={"Loading..."}>
-      <div>{children}</div>
+    <Suspense fallback={<LoadingSpinner />}>
+      {children}
       <OneTapComponent />
     </Suspense>
   );

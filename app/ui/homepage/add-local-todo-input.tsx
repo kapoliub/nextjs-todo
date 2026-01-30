@@ -3,8 +3,7 @@
 import { Button } from "@heroui/button";
 import { Textarea } from "@heroui/input";
 import { ChangeEvent, useState } from "react";
-
-import { PlusIcon } from "@/app/ui/icons";
+import { Plus } from "lucide-react";
 
 interface AddLocalTodoInputProps {
   onSave: (value: string) => void;
@@ -31,6 +30,7 @@ export default function AddLocalTodoInput({ onSave }: AddLocalTodoInputProps) {
       <Textarea
         color="warning"
         minRows={1}
+        placeholder="What needs to be done?"
         value={inputValue}
         onChange={handleChange}
       />
@@ -41,7 +41,7 @@ export default function AddLocalTodoInput({ onSave }: AddLocalTodoInputProps) {
         disabled={isButtonDisabled}
         onPress={handleSubmit}
       >
-        <PlusIcon />
+        <Plus />
       </Button>
     </div>
   );
