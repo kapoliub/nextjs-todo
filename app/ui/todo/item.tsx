@@ -5,9 +5,9 @@ import { Card, CardBody } from "@heroui/card";
 import { RefObject, useState } from "react";
 import { Checkbox } from "@heroui/checkbox";
 import { useParams } from "next/navigation";
+import { Check } from "lucide-react";
 
 import { EditableText, ButtonWithModal } from "@/app/ui/common";
-import { CheckIcon } from "@/app/ui/icons";
 import { deleteTodo, editTodo } from "@/lib/actions/todos";
 import { StoredTodo } from "@/lib/utils/local-storage";
 import { useClickOutside } from "@/lib/hooks/use-outside-click";
@@ -120,7 +120,7 @@ export default function TodoItem({
             disabled={isLoading}
             onPress={handleSave}
           >
-            <CheckIcon />
+            <Check size={16} />
           </Button>
         ) : (
           <ButtonWithModal

@@ -2,9 +2,9 @@
 import { useParams } from "next/navigation";
 import { Button } from "@heroui/button";
 import { RefObject, useState } from "react";
+import { Check, Pencil } from "lucide-react";
 
 import { ButtonWithModal } from "@/app/ui/common";
-import { CheckIcon, EditIcon } from "@/app/ui/icons";
 import { deleteList } from "@/lib/actions/lists";
 import { addSuccessToast } from "@/lib/utils/toast";
 
@@ -31,10 +31,6 @@ export default function ButtonsContainer({
   const handleDeleteSubmit = async () => {
     setIsLoading(true);
     await deleteList(itemId, itemId === params.id);
-
-    // if (itemId === params.id) {
-    //   redirect(PATHS.todos);
-    // }
     setIsLoading(false);
     addSuccessToast("The list has been deleted");
   };
@@ -59,7 +55,7 @@ export default function ButtonsContainer({
         size="sm"
         onPress={isEditable ? handleEditSubmit : onEditButtonClick}
       >
-        {isEditable ? <CheckIcon /> : <EditIcon />}
+        {isEditable ? <Check size={16} /> : <Pencil size={16} />}
       </Button>
       <ButtonWithModal
         buttonProps={{

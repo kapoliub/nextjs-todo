@@ -1,16 +1,15 @@
-import React from "react";
-import { Input, InputProps } from "@heroui/input";
+"use client";
 
-import { EyeSlashFilledIcon, EyeFilledIcon } from "@/app/ui/icons";
+import React, { useState } from "react";
+import { Input, InputProps } from "@heroui/input";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function PasswordInput(props: InputProps) {
-  const [isVisible, setIsVisible] = React.useState(false);
-
+  const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
 
   return (
     <Input
-      className="max-w-xs"
       endContent={
         <button
           aria-label="toggle password visibility"
@@ -19,9 +18,9 @@ export default function PasswordInput(props: InputProps) {
           onClick={toggleVisibility}
         >
           {isVisible ? (
-            <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+            <Eye className="text-2xl text-default-400 pointer-events-none" />
           ) : (
-            <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+            <EyeOff className="text-2xl text-default-400 pointer-events-none" />
           )}
         </button>
       }

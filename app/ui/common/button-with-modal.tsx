@@ -8,9 +8,8 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@heroui/modal";
+import { Trash2 } from "lucide-react";
 import { ReactNode, useState } from "react";
-
-import { TrashIcon } from "@/app/ui/icons";
 
 interface ButtonWithModalProps {
   onSubmit: () => Promise<void>;
@@ -48,7 +47,7 @@ export default function ButtonWithModal({
         onPress={onOpen}
         {...buttonProps}
       >
-        <TrashIcon />
+        <Trash2 size={16} />
       </Button>
       <Modal isOpen={isOpen} placement="center" onOpenChange={onOpenChange}>
         <ModalContent>

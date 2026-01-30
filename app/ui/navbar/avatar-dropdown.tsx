@@ -5,38 +5,56 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  DropdownSection,
 } from "@heroui/dropdown";
+import { User, LogOut, Settings } from "lucide-react";
 
 import { signOut } from "@/lib/actions/auth";
 
-interface AvatarDropdownProps {
-  name: string;
-}
-
-const dropdownItems = [
-  { label: "Profile", href: "/profile", type: "link" },
-  { label: "Logout", type: "button", action: signOut },
-];
-
-export default function AvatarDropdown({ name }: AvatarDropdownProps) {
+export default function AvatarDropdown({ name }: { name: string }) {
   return (
-    <Dropdown>
+    <Dropdown
+      backdrop="blur"
+      classNames={{ content: "border-small border-default-100 bg-background" }}
+      placement="bottom-end"
+    >
       <DropdownTrigger>
-        <Avatar className="cursor-pointer" color="primary" name={name} />
+        <Avatar
+          isBordered
+          as="button"
+          className="transition-transform hover:scale-105 active:scale-95 cursor-pointer"
+          color="primary"
+          name={name.substring(0, 2).toUpperCase()}
+          size="sm"
+        />
       </DropdownTrigger>
 
-      <DropdownMenu aria-label="Dynamic Actions" items={dropdownItems}>
-        {({ label, href, type, action }) => (
+      <DropdownMenu aria-label="User Actions" variant="flat">
+        <DropdownSection showDivider aria-label="Profile & Settings">
           <DropdownItem
-            key={label}
-            href={type === "link" ? href : undefined}
-            onPress={type === "button" ? action : undefined}
-            // className={item.key === "delete" ? "text-danger" : ""}
-            // color={item.key === "delete" ? "danger" : "default"}
+            key="profile"
+            description="View your personal info"
+            href="/profile"
+            startContent={<User size={16} />}
           >
-            {label}
+            My Profile
           </DropdownItem>
-        )}
+          <DropdownItem key="settings" startContent={<Settings size={16} />}>
+            Account Settings
+          </DropdownItem>
+        </DropdownSection>
+
+        <DropdownSection aria-label="Exit">
+          <DropdownItem
+            key="logout"
+            className="text-danger"
+            color="danger"
+            startContent={<LogOut size={16} />}
+            onPress={() => signOut()}
+          >
+            Log Out
+          </DropdownItem>
+        </DropdownSection>
       </DropdownMenu>
     </Dropdown>
   );

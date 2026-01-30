@@ -28,6 +28,7 @@ export default function AddTodoInput() {
         disabled={isPending}
         isInvalid={!!state.errors.title}
         name="title"
+        placeholder="What needs to be done?"
         type="text"
       />
     </Form>

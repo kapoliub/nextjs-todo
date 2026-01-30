@@ -29,50 +29,37 @@ export default function PersonalInfoForm({
   }, [state]);
 
   return (
-    <Card className="min-w-[300px]">
-      <CardBody>
+    <Card className="bg-default-100/40 backdrop-blur-md border-default-200/50 shadow-sm overflow-visible">
+      <CardBody className="p-6">
         <Form
           action={action}
-          className="flex flex-col gap-4 p-1"
+          className="flex flex-col gap-6"
           formError={state.errors._form}
           loading={isPending}
-          submitButtonLabel="Change Personal Info"
+          submitButtonLabel="Update Profile"
         >
-          <Input
-            autoComplete="email"
-            defaultValue={email}
-            disabled={isPending}
-            errorMessage={() => (
-              <ul>
-                {state.errors.email?.map((error) => (
-                  <li key={error}>{error}</li>
-                ))}
-              </ul>
-            )}
-            isInvalid={!!state.errors.email}
-            label="Email"
-            labelPlacement="outside-top"
-            name="email"
-            type="email"
-          />
-
-          <Input
-            disabled
-            autoComplete="tel"
-            defaultValue={phone}
-            errorMessage={() => (
-              <ul>
-                {state.errors.phone?.map((error) => (
-                  <li key={error}>{error}</li>
-                ))}
-              </ul>
-            )}
-            isInvalid={!!state.errors.phone}
-            label="Phone"
-            labelPlacement="outside-top"
-            name="phone"
-            type="tel"
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              defaultValue={email}
+              errorMessage={state.errors.email?.join(", ")}
+              isInvalid={!!state.errors.email}
+              label="Email Address"
+              labelPlacement="outside"
+              name="email"
+              placeholder="example@mail.com"
+              variant="bordered"
+            />
+            <Input
+              disabled
+              defaultValue={phone}
+              description="Phone updates are currently disabled"
+              label="Phone Number"
+              labelPlacement="outside"
+              name="phone"
+              placeholder="+38 (000) 000 0000"
+              variant="faded"
+            />
+          </div>
         </Form>
       </CardBody>
     </Card>

@@ -8,8 +8,8 @@ import {
   startTransition,
   useEffect,
 } from "react";
+import { Plus } from "lucide-react";
 
-import { PlusIcon } from "@/app/ui/icons";
 import { addErrorToast } from "@/lib/utils/toast";
 
 interface FormProps extends FormHTMLAttributes<HTMLFormElement> {
@@ -66,7 +66,7 @@ export default function Form({
           isLoading={loading}
           type="submit"
         >
-          <PlusIcon />
+          <Plus size={16} />
         </Button>
       )}
     </form>

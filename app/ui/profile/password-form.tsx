@@ -20,45 +20,36 @@ export default function PasswordForm() {
   }, [state]);
 
   return (
-    <Card className="min-w-[300px]">
-      <CardBody>
+    <Card className="bg-default-100/40 backdrop-blur-md border-default-200/50 shadow-sm">
+      <CardBody className="p-6">
         <Form
           action={action}
-          className="flex flex-col gap-4 p-1"
+          className="flex flex-col gap-6"
           formError={state.errors._form}
           loading={isPending}
           submitButtonLabel="Change Password"
         >
-          <PasswordInput
-            autoComplete="off"
-            disabled={isPending}
-            errorMessage={() => (
-              <ul>
-                {state.errors.newPassword?.map((error) => (
-                  <li key={error}>{error}</li>
-                ))}
-              </ul>
-            )}
-            isInvalid={!!state.errors.newPassword}
-            label="New Password"
-            labelPlacement="outside-top"
-            name="newPassword"
-          />
-          <PasswordInput
-            autoComplete="off"
-            disabled={isPending}
-            errorMessage={() => (
-              <ul>
-                {state.errors.confirmNewPassword?.map((error) => (
-                  <li key={error}>{error}</li>
-                ))}
-              </ul>
-            )}
-            isInvalid={!!state.errors.confirmNewPassword}
-            label="Confirm New Password"
-            labelPlacement="outside-top"
-            name="confirmNewPassword"
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <PasswordInput
+              errorMessage={state.errors.newPassword?.join(", ")}
+              isInvalid={!!state.errors.newPassword}
+              label="New Password"
+              labelPlacement="outside"
+              name="newPassword"
+              placeholder="••••••••"
+              variant="bordered"
+            />
+
+            <PasswordInput
+              errorMessage={state.errors.confirmNewPassword?.join(", ")}
+              isInvalid={!!state.errors.confirmNewPassword}
+              label="Confirm New Password"
+              labelPlacement="outside"
+              name="confirmNewPassword"
+              placeholder="••••••••"
+              variant="bordered"
+            />
+          </div>
         </Form>
       </CardBody>
     </Card>
